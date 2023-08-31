@@ -4,15 +4,25 @@ const path = require("path")
 const connectToDatabase = require("./db")
 const { config } = require("./config")
 
+const httpServer = require("http").Server(app)
+const { socketConnection } = require("../files/messages/sockets")
+
 dotenv.config({ path: path.join(__dirname, "../.env") })
 
 const port = config.PORT || 5500
 
+const io = require("socket.io")(httpServer, {
+  cors: {
+    origin: "*",
+  },
+})
+
 const startServer = () => {
-  application()
+  socketConnection(io)
+  application(io)
   connectToDatabase()
 
-  app.listen(port, () => {
+  httpServer.listen(port, () => {
     console.log(`Application running on port ${port}`)
   })
 

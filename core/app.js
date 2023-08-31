@@ -27,7 +27,7 @@ const application = (io) => {
   })
 
   app.get("/", (req, res) => {
-    res.status(200).json({ message: "IEP Nuddy is working fine" })
+    res.status(200).json({ message: "Sufian Bles is working fine" })
   })
 
   routes(app)

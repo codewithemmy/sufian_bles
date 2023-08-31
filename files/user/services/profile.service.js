@@ -15,7 +15,6 @@ const {
   ProfileFailure,
   ProfileSuccess,
 } = require("../messages/profile.messages")
-const { completionIEP } = require("../../../utils/openai")
 
 class ProfileService {
   static async profileImage(payload, locals) {

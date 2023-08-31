@@ -2,10 +2,10 @@ const mongoose = require("mongoose")
 
 const userSchema = new mongoose.Schema(
   {
-    firstName: {
+    username: {
       type: String,
     },
-    lastName: {
+    fullName: {
       type: String,
     },
     email: {
@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
     accountType: {
       type: String,
       required: true,
-      enum: ["User"],
+      enum: ["User", "Admin"],
       default: "User",
     },
     isDelete: {

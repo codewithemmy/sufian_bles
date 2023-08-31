@@ -19,7 +19,7 @@ const { sendMailNotification } = require("../../../utils/email")
 // const { sendMailNotification } = require("../../../utils/email")
 class UserService {
   static async createUser(payload) {
-    const { lastName, email } = payload
+    const { fullName, email } = payload
 
     const userExist = await UserRepository.validateUser({
       email,
@@ -40,7 +40,7 @@ class UserService {
 
     /** once the created send otp mail for verification, if accountType is citybuilder send otp to phone number*/
     const substitutional_parameters = {
-      name: lastName,
+      name: fullName,
     }
 
     await sendMailNotification(
