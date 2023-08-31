@@ -1,10 +1,10 @@
 const { default: mongoose } = require("mongoose")
 const { LIMIT, SKIP, SORT } = require("../../constants")
-const SubscriptionPlan = require("./subscriptionPlan.model")
+const { SubscriptionPlan } = require("./subscriptionPlan.model")
 
 class SubscriptionPlanRepository {
   static async create(subscriptionPlanPayload) {
-    return SubscriptionPlan.create({ ...subscriptionPlanPayload })
+    return await SubscriptionPlan.create({ ...subscriptionPlanPayload })
   }
 
   static async fetchOne(payload) {

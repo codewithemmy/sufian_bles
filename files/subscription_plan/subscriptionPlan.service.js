@@ -14,7 +14,7 @@ class SubscriptionPlanService {
       ...rest,
     })
 
-    if (!subscriptionPlan._id)
+    if (!subscriptionPlan)
       return { success: false, msg: SubscriptionPlanMessages.CREATE_ERROR }
 
     return { success: true, msg: SubscriptionPlanMessages.CREATE_SUCCESS }
