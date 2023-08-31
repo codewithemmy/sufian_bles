@@ -32,9 +32,9 @@ const TransactionSchema = new mongoose.Schema(
       enum: ["pending", "paid", "failed"],
       default: "pending",
     },
-    subscriptionType: {
-      type: String,
-      enum: ["yearly", "monthly"],
+    subscriptionId: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
     },
     paymentFor: {
       type: String,

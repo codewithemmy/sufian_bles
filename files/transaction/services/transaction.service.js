@@ -21,7 +21,7 @@ class TransactionService {
   }
 
   static async initiatePaymentIntentTransaction(payload) {
-    const { amount, userId, channel, subscriptionType } = payload
+    const { amount, userId, channel, subscriptionId } = payload
 
     const user = await UserRepository.findSingleUserWithParams({
       _id: new mongoose.Types.ObjectId(userId),
@@ -47,7 +47,7 @@ class TransactionService {
       channel,
       clientSecret,
       transactionId,
-      subscriptionType,
+      subscriptionId,
     })
 
     return {

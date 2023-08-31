@@ -8,11 +8,11 @@ const {
   getTransactionController,
 } = require("./controller/transaction.controller")
 
-transactionRoute.use(isAuthenticated)
+// transactionRoute.use(isAuthenticated)
 
 transactionRoute.post("/payment-intent", paymentIntentTransactionController)
 transactionRoute.patch("/verify", verifyTransactionController)
-transactionRoute.get("/teacher", getTransactionController)
+transactionRoute.get("/", getTransactionController)
 
 //routes
 module.exports = transactionRoute
