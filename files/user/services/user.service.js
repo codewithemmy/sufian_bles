@@ -10,9 +10,6 @@ const {
 const createHash = require("../../../utils/createHash")
 const { UserSuccess, UserFailure } = require("../user.messages")
 const { UserRepository } = require("../user.repository")
-const {
-  SubscriptionRepository,
-} = require("../../subscription/subscription.repository")
 
 const { LIMIT, SKIP, SORT } = require("../../../constants")
 const { sendMailNotification } = require("../../../utils/email")

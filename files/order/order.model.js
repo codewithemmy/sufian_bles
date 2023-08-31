@@ -1,31 +1,32 @@
 const mongoose = require("mongoose")
 // const cron = require("node-cron")
 
-const SubscriptionSchema = new mongoose.Schema(
+const orderSchema = new mongoose.Schema(
   {
-    userId: {
-      type: mongoose.Types.ObjectId,
-      ref: "User",
-    },
-    amount: {
+    orderValue: {
       type: Number,
       required: true,
     },
-    name: {
-      type: String,
-    },
-    email: {
+    orderId: {
       type: String,
       required: true,
     },
-    status: {
-      type: String,
+    orderName: {
+      type: mongoose.Types.ObjectId,
+      ref: "SubscriptionPlan",
       required: true,
-      enum: ["active", "expired"],
     },
     transactionId: {
       type: mongoose.Types.ObjectId,
       ref: "Transaction",
+    },
+    isConfirmed: {
+      type: Boolean,
+      default: false,
+    },
+    status: {
+      type: String,
+      enum: ["Complete", "Active", "Delivered", "Cancelled", "Pending"],
     },
     expiresAt: {
       type: Number,
@@ -43,10 +44,6 @@ const SubscriptionSchema = new mongoose.Schema(
 //   }
 // })
 
-const subscription = mongoose.model(
-  "Subscription",
-  SubscriptionSchema,
-  "subscription"
-)
+const order = mongoose.model("Order", orderSchema, "order")
 
-module.exports = { Subscription: subscription }
+module.exports = { Order: order }

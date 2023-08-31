@@ -9,9 +9,8 @@ const { UserRepository } = require("../../user/user.repository")
 
 const { TransactionRepository } = require("../transaction.repository")
 const { queryConstructor } = require("../../../utils")
-const {
-  SubscriptionRepository,
-} = require("../../subscription/subscription.repository")
+const { OrderRepository } = require("../../order/order.repository")
+const { OrderService } = require("../../order/order.service")
 
 class TransactionService {
   static paymentProvider
@@ -58,7 +57,7 @@ class TransactionService {
   }
 
   static async verifyStripePaymentService(payload) {
-    const { transactionId, status } = payload
+    const { transactionId, status, subscriptionPlanId } = payload
 
     const transaction = await TransactionRepository.fetchOne({
       transactionId: transactionId,
@@ -71,18 +70,17 @@ class TransactionService {
       await transaction.save()
 
       //if payment is successful, subscription should be created
-      const subscription = await SubscriptionRepository.create({
+      const order = await OrderService.createOrder({
         userId: new mongoose.Types.ObjectId(transaction.userId),
         name: transaction.name,
         email: transaction.email,
         amount: transaction.amount,
-        status: "active",
+        subscriptionPlanId,
         transactionId: transaction._id,
-        expiresAt: transaction.subscriptionType === "yearly" ? 12 : 1,
       })
 
-      if (!subscription)
-        return { success: false, msg: `unable to create subscription` }
+      if (!order)
+        return { success: false, msg: `unable to create order` }
 
       return {
         success: true,
