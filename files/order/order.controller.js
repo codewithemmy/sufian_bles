@@ -7,7 +7,17 @@ const { OrderService } = require("./order.service")
 const createOrderController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(OrderService.createOrder(req.body))
 
-  console.log("error", error)
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  return responseHandler(res, SUCCESS, data)
+}
+
+const fetchOrderController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    OrderService.fetchOrder(req.query)
+  )
 
   if (error) return next(error)
 
@@ -43,4 +53,5 @@ const createOrderController = async (req, res, next) => {
 
 module.exports = {
   createOrderController,
+  fetchOrderController,
 }

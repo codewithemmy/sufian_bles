@@ -29,6 +29,12 @@ class OrderService {
 
     const randomGen = AlphaNumeric(7, "number")
 
+    const duplicateOrder = await OrderRepository.fetchOne({
+      transaction: transaction._id,
+    })
+
+    if (duplicateOrder) return { success: false, msg: OrderMessages.DUPLICATE }
+
     const order = await OrderRepository.create({
       ...rest,
       orderId: `#${randomGen}`,
@@ -43,33 +49,32 @@ class OrderService {
     return { success: true, msg: OrderMessages.CREATE_SUCCESS }
   }
 
-  static async fetchEnterpriseOrders(payload) {
-    const { user, query } = payload
-
+  static async fetchOrder(payload) {
     const { error, params, limit, skip, sort } = queryConstructor(
-      query,
+      payload,
       "createdAt",
-      "Orders"
+      "Order"
     )
 
     if (error) return { success: false, msg: error }
 
-    const Orders = await OrderRepository.fetch({
+    const order = await OrderRepository.fetch({
       ...params,
       limit,
       skip,
       sort,
     })
 
-    if (Orders.length < 1)
+    if (order.length < 1)
       return { success: false, msg: OrderMessages.NONE_FOUND }
 
     return {
       success: true,
       msg: OrderMessages.FETCH_SUCCESS,
-      data: Orders,
+      data: order,
     }
   }
+  
 
   static async fetchEnterpriseOrder(user) {
     const { enterpriseId } = user
