@@ -27,7 +27,7 @@ const forgotPasswordController = async (req, res, next) => {
 }
 const resetPasswordController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    AuthService.resetPassword(req.body, req.params.id)
+    AuthService.resetPassword(req.body)
   )
 
   if (error) return next(error)

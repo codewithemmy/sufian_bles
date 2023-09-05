@@ -61,11 +61,12 @@ class AuthService {
     return { success: true, msg: AuthSuccess.OTP_SENT, otp: otp, id: user._id }
   }
 
-  static async resetPassword(body, id) {
-    const { newPassword } = body
+  static async resetPassword(body) {
+    const { newPassword, email, otp } = body
 
     const findUser = await UserRepository.findSingleUserWithParams({
-      _id: id,
+      email,
+      verificationOtp: otp,
     })
 
     if (!findUser) return { success: false, msg: AuthFailure.FETCH }
@@ -92,17 +93,16 @@ class AuthService {
 
     await user.save()
 
-     const substitutional_parameters = {
-       resetOtp: otp,
-     }
+    const substitutional_parameters = {
+      resetOtp: otp,
+    }
 
-     await sendMailNotification(
-       email,
-       "Reset Password",
-       substitutional_parameters,
-       "RESET_OTP"
-     )
-
+    await sendMailNotification(
+      email,
+      "Reset Password",
+      substitutional_parameters,
+      "RESET_OTP"
+    )
 
     return {
       success: true,

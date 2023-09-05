@@ -62,6 +62,9 @@ class UserService {
       email: email,
     })
 
+    if (userProfile.isVerified !== true)
+      return { success: false, msg: UserFailure.VERIFIED }
+
     if (!userProfile) return { success: false, msg: UserFailure.USER_EXIST }
 
     const isPassword = await verifyPassword(password, userProfile.password)
