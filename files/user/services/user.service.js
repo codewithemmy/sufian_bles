@@ -35,16 +35,16 @@ class UserService {
 
     if (!user._id) return { success: false, msg: UserFailure.CREATE }
 
-    /** once the created send otp mail for verification, if accountType is citybuilder send otp to phone number*/
     const substitutional_parameters = {
       name: fullName,
+      emailOtp: otp,
     }
 
     await sendMailNotification(
       email,
       "Sign-Up",
       substitutional_parameters,
-      "WELCOME"
+      "VERIFICATION"
     )
 
     return {

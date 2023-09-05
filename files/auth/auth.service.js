@@ -27,6 +27,7 @@ class AuthService {
     await confirmOtp.save()
 
     /** send confirmation mail or sms to user */
+    
 
     return {
       success: true,
