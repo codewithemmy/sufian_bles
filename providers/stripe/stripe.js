@@ -1,5 +1,9 @@
 const mongoose = require("mongoose")
 const { config } = require("../../core/config")
+const {
+  TransactionRepository,
+} = require("../../files/transaction/transaction.repository")
+const { UserRepository } = require("../../files/user/user.repository")
 const stripe = require("stripe")(config.STRIPE_SECRET_KEY)
 
 class StripePaymentService {
@@ -10,8 +14,13 @@ class StripePaymentService {
   }
 
   async createPaymentIntent(paymentPayload) {
-    const { amount } = paymentPayload
+    const { amount, channel, subscriptionId, userId } = paymentPayload
     try {
+      const user = await UserRepository.findSingleUserWithParams({
+        _id: new mongoose.Types.ObjectId(userId),
+      })
+      if (!user) return { success: false, msg: `user not found` }
+
       if (!amount)
         return {
           success: false,
@@ -28,9 +37,21 @@ class StripePaymentService {
           msg: `error creating payment intent, try again later`,
         }
 
+      const { client_secret, id } = paymentIntent
+
+      await TransactionRepository.create({
+        name: user.fullName,
+        email: user.email,
+        amount,
+        userId,
+        channel,
+        clientSecret: client_secret,
+        transactionId: id,
+        subscriptionId,
+      })
+
       return {
         paymentIntentData: paymentIntent,
-      
       }
     } catch (error) {
       console.log("error", error)

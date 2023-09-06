@@ -22,32 +22,16 @@ class TransactionService {
   static async initiatePaymentIntentTransaction(payload) {
     const { amount, userId, channel, subscriptionId } = payload
 
-    const user = await UserRepository.findSingleUserWithParams({
-      _id: new mongoose.Types.ObjectId(userId),
-    })
-
-    if (!user) return { success: false, msg: `user not found` }
-
     await this.getConfig()
     const paymentDetails = await this.paymentProvider.createPaymentIntent({
       amount,
+      channel,
+      subscriptionId,
+      userId,
     })
 
     if (!paymentDetails)
       return { success: false, msg: `unable to make or create payment intent` }
-
-    const { clientSecret, transactionId } = paymentDetails
-
-    await TransactionRepository.create({
-      name: user.fullName,
-      email: user.email,
-      amount,
-      userId,
-      channel,
-      clientSecret,
-      transactionId,
-      subscriptionId,
-    })
 
     return {
       success: true,
@@ -79,8 +63,7 @@ class TransactionService {
         transactionId: transaction._id,
       })
 
-      if (!order)
-        return { success: false, msg: `unable to create order` }
+      if (!order) return { success: false, msg: `unable to create order` }
 
       return {
         success: true,
