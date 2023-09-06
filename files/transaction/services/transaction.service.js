@@ -49,6 +49,9 @@ class TransactionService {
 
     if (!transaction) return { success: false, msg: `transaction not found` }
 
+    if (transaction.status === "paid")
+      return { success: false, msg: `transaction already updated` }
+
     if (status === "succeeded") {
       transaction.status = "paid"
       await transaction.save()
