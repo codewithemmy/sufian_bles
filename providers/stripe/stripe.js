@@ -29,9 +29,8 @@ class StripePaymentService {
         }
 
       return {
-        clientSecret: paymentIntent.client_secret,
-        transactionId: paymentIntent.id,
-        amount: paymentIntent.amount,
+        paymentIntentData: paymentIntent,
+      
       }
     } catch (error) {
       console.log("error", error)
