@@ -49,7 +49,7 @@ class TransactionService {
 
     if (!transaction) return { success: false, msg: `transaction not found` }
 
-    if (transaction.status === "paid")
+    if (transaction.status === "paid" || transaction.status === "failed")
       return { success: false, msg: `transaction already updated` }
 
     if (status === "succeeded") {
