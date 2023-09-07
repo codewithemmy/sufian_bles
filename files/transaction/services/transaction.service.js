@@ -108,7 +108,7 @@ class TransactionService {
 
   //   return {
   //     success: true,
-  //     msg: `transaction fetched successfully  `,
+  //     msg: `transaction fetched successfully`,
   //     data: transaction,
   //   }
   // }

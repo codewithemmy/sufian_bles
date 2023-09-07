@@ -14,7 +14,7 @@ orderRoute.use(isAuthenticated)
 orderRoute
   .route("/")
   .post(adminVerifier, createOrderController)
-  .get(fetchOrderController)
+  .get(adminVerifier, fetchOrderController)
 
 //routes
 module.exports = orderRoute
