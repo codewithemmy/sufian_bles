@@ -75,16 +75,16 @@ class UserService {
 
     token = await tokenHandler({
       _id: userProfile._id,
-      firstName: userProfile.firstName,
-      lastName: userProfile.lastName,
+      username: userProfile.username,
+      fullName: userProfile.fullName,
       email: userProfile.email,
       isAdmin: false,
     })
 
     const user = {
       _id: userProfile._id,
-      firstName: userProfile.firstName,
-      lastName: userProfile.lastName,
+      username: userProfile.username,
+      fullName: userProfile.fullName,
       email: userProfile.email,
       ...token,
     }
