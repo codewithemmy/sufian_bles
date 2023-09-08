@@ -1,37 +1,58 @@
 const mongoose = require("mongoose")
 
 const subscriptionPlanSchema = new mongoose.Schema({
+  title: String,
+  subTitle: String,
+  description: String,
+  serviceImage: String,
   service: {
     type: String,
   },
-  planType: {
-    starter: {
-      amount: Number,
+  availablePlans: {
+    basic: {
+      title: String,
+      subTitle: String,
+      name: String,
+      cost: Number,
+      priceId: String,
       deliveryTime: Number,
+      numberOfRevisions: String,
       numberOfPages: Number,
       designCustomization: Boolean,
       contentUpload: Boolean,
       responsiveDesign: Boolean,
+      includeSourceCode: Boolean,
     },
     pro: {
-      amount: Number,
+      title: String,
+      subTitle: String,
+      name: String,
+      cost: Number,
+      priceId: String,
       deliveryTime: Number,
+      numberOfRevisions: String,
       numberOfPages: Number,
       designCustomization: Boolean,
       contentUpload: Boolean,
       responsiveDesign: Boolean,
+      includeSourceCode: Boolean,
     },
     max: {
-      amount: Number,
+      title: String,
+      subTitle: String,
+      name: String,
+      cost: Number,
+      priceId: String,
       deliveryTime: Number,
+      numberOfRevisions: String,
       numberOfPages: Number,
       designCustomization: Boolean,
       contentUpload: Boolean,
       responsiveDesign: Boolean,
+      includeSourceCode: Boolean,
     },
   },
-  projectDetails: String,
-  image: String,
+
   isDeleted: {
     type: Boolean,
     default: false,

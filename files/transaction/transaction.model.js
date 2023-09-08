@@ -12,7 +12,7 @@ const TransactionSchema = new mongoose.Schema(
     email: {
       type: String,
     },
-    amount: {
+    cost: {
       type: Number,
       required: true,
     },
@@ -24,9 +24,6 @@ const TransactionSchema = new mongoose.Schema(
     transactionId: {
       type: String,
     },
-    clientSecret: {
-      type: String,
-    },
     status: {
       type: String,
       enum: ["pending", "paid", "failed"],
@@ -34,7 +31,7 @@ const TransactionSchema = new mongoose.Schema(
     },
     subscriptionId: {
       type: mongoose.Types.ObjectId,
-      ref: "User",
+      ref: "SubscriptionPlan",
     },
     paymentFor: {
       type: String,

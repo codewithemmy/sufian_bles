@@ -85,6 +85,48 @@ class TransactionService {
     }
   }
 
+  static async initiateCheckoutSession(payload) {
+    const { priceId, cost, userId, channel, subscriptionId, quantity } =
+      payload
+
+    await this.getConfig()
+    const checkout = await this.paymentProvider.createCheckOutSession({
+      priceId,
+      cost,
+      userId,
+      channel,
+      subscriptionId,
+      quantity,
+    })
+
+    if (!checkout)
+      return { success: false, msg: `unable to successfully checkout` }
+
+    return {
+      success: true,
+      msg: TransactionSuccess.INITIATE,
+      data: checkout,
+    }
+  }
+
+  // static async verifyCheckoutSession(payload) {
+  //   const { priceId } = payload
+
+  //   await this.getConfig()
+  //   const checkout = await this.paymentProvider.verifyCheckOutSession({
+  //     priceId,
+  //   })
+
+  //   if (!checkout)
+  //     return { success: false, msg: `unable to successfully checkout` }
+
+  //   return {
+  //     success: true,
+  //     msg: TransactionSuccess.INITIATE,
+  //     data: checkout,
+  //   }
+  // }
+
   // static async getTransactionService(payload, locals) {
   //   const { error, params, limit, skip, sort } = queryConstructor(
   //     payload,

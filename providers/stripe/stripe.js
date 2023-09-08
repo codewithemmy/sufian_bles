@@ -57,6 +57,72 @@ class StripePaymentService {
       console.log("error", error)
     }
   }
+
+  async createCheckOutSession(paymentPayload) {
+    const { priceId, cost, channel, subscriptionId, userId, quantity } =
+      paymentPayload
+    try {
+      const user = await UserRepository.findSingleUserWithParams({
+        _id: new mongoose.Types.ObjectId(userId),
+      })
+      if (!user) return { success: false, msg: `user not found` }
+
+      const session = await stripe.checkout.sessions.create({
+        line_items: [
+          {
+            price: priceId,
+            quantity: quantity,
+          },
+        ],
+        mode: "payment",
+        success_url: `${process.env.DOMAIN_URL}?success=true`,
+        cancel_url: `${process.env.DOMAIN_URL}?canceled=true`,
+      })
+
+      await TransactionRepository.create({
+        name: user.fullName,
+        email: user.email,
+        cost: session.amount_total,
+        userId,
+        channel,
+
+        transactionId: session.id,
+        subscriptionId,
+      })
+
+      return { session }
+    } catch (error) {
+      // console.log("error", )
+      return { error: error.message }
+    }
+  }
+
+  async verifyCheckOutSession(paymentPayload) {
+    // const { priceId } = paymentPayload
+    try {
+      const session = await stripe.checkout.sessions.create({
+        line_items: [
+          {
+            price_data: {
+              currency: "usd",
+              product_data: {
+                name: "Service",
+              },
+              unit_amount: 2701,
+            },
+            quantity: 1,
+          },
+        ],
+        mode: "payment",
+        success_url: `${process.env.DOMAIN_URL}?success=true`,
+        cancel_url: `${process.env.DOMAIN_URL}?canceled=true`,
+      })
+
+      return { session }
+    } catch (error) {
+      console.log("error", error)
+    }
+  }
 }
 
 module.exports = { StripePaymentService }

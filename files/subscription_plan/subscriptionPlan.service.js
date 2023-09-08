@@ -6,11 +6,11 @@ const { SubscriptionPlanRepository } = require("./subscriptionPlan.repository")
 class SubscriptionPlanService {
   static async createSubscriptionPlan(payload, locals) {
     const { body, image } = payload
-    const { service, ...rest } = body
+    const { title, ...rest } = body
 
     const subscriptionPlan = await SubscriptionPlanRepository.create({
-      service: service,
-      image,
+      title: title,
+      serviceImage: image,
       ...rest,
     })
 
