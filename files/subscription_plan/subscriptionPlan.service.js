@@ -54,7 +54,7 @@ class SubscriptionPlanService {
     const { service, ...rest } = body
     const subscriptionPlan = await SubscriptionPlanRepository.update(id, {
       service: service,
-      image,
+      serviceImage: image,
       ...rest,
     })
 

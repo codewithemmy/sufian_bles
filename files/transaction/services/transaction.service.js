@@ -86,13 +86,16 @@ class TransactionService {
   }
 
   static async initiateCheckoutSession(payload) {
-    const { priceId, cost, userId, channel, subscriptionId, quantity } =
-      payload
+    const { priceId, userId, channel, subscriptionId, quantity } = payload
+
+    const user = await UserRepository.findSingleUserWithParams({
+      _id: new mongoose.Types.ObjectId(userId),
+    })
+    if (!user) return { success: false, msg: `user not found` }
 
     await this.getConfig()
     const checkout = await this.paymentProvider.createCheckOutSession({
       priceId,
-      cost,
       userId,
       channel,
       subscriptionId,
@@ -101,6 +104,27 @@ class TransactionService {
 
     if (!checkout)
       return { success: false, msg: `unable to successfully checkout` }
+
+    const confirmTransaction = await TransactionRepository.fetchOne({
+      priceId,
+    })
+
+    const { session } = checkout
+    const { id, amount_total } = session
+
+    if (confirmTransaction)
+      return { success: false, msg: `duplicate transaction` }
+
+    await TransactionRepository.create({
+      name: user.fullName,
+      email: user.email,
+      cost: amount_total,
+      userId,
+      priceId,
+      channel,
+      transactionId: id,
+      subscriptionId,
+    })
 
     return {
       success: true,

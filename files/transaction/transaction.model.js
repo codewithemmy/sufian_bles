@@ -24,6 +24,9 @@ const TransactionSchema = new mongoose.Schema(
     transactionId: {
       type: String,
     },
+    priceId: {
+      type: String,
+    },
     status: {
       type: String,
       enum: ["pending", "paid", "failed"],

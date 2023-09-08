@@ -59,14 +59,9 @@ class StripePaymentService {
   }
 
   async createCheckOutSession(paymentPayload) {
-    const { priceId, cost, channel, subscriptionId, userId, quantity } =
+    const { priceId, channel, subscriptionId, userId, quantity } =
       paymentPayload
     try {
-      const user = await UserRepository.findSingleUserWithParams({
-        _id: new mongoose.Types.ObjectId(userId),
-      })
-      if (!user) return { success: false, msg: `user not found` }
-
       const session = await stripe.checkout.sessions.create({
         line_items: [
           {
@@ -79,17 +74,7 @@ class StripePaymentService {
         cancel_url: `${process.env.DOMAIN_URL}?canceled=true`,
       })
 
-      await TransactionRepository.create({
-        name: user.fullName,
-        email: user.email,
-        cost: session.amount_total,
-        userId,
-        channel,
-
-        transactionId: session.id,
-        subscriptionId,
-      })
-
+     
       return { session }
     } catch (error) {
       // console.log("error", )
