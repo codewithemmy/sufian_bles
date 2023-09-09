@@ -15,30 +15,6 @@ class StripePaymentService {
     return { success: false, msg: gatewayResponse }
   }
 
-  // async createCheckOutSession(paymentPayload) {
-  //   const { priceId, email, quantity } = paymentPayload
-  //   try {
-  //     const session = await stripe.checkout.sessions.create({
-  //       payment_method_types: ["card"],
-  //       line_items: [
-  //         {
-  //           price: priceId,
-  //           quantity: quantity,
-  //         },
-  //       ],
-  //       customer: email,
-  //       mode: "payment",
-  //       success_url: `${STRIPE_SUCCESS_CALLBACK}?userId=${user._id}&uuid=${uuid}`,
-  //       cancel_url: `${STRIPE_CANCEL_CALLBACK}?userId=${user._id}&uuid=${uuid}`,
-  //     })
-
-  //     return session
-  //   } catch (error) {
-  //     // console.log("error", )
-  //     return { error: error.message }
-  //   }
-  // }
-
   async createCheckOutSession(paymentPayload) {
     const { priceId, quantity, userId, uuid } = paymentPayload
 
@@ -99,8 +75,6 @@ class StripePaymentService {
 
       transaction.status = session.status
       await transaction.save()
-
-      //if payment is successful, subscription should be created
 
       const confirmOrder = await OrderRepository.fetchOne({
         orderName: transaction.subscriptionId,
