@@ -22,7 +22,8 @@ class OrderRepository {
     return await Order.find({
       ...restOfPayload,
     })
-      .populate({ path: "orderName", select: "service" })
+      .populate({ path: "userId", select: "username fullName email" })
+      .populate({ path: "orderName", select: "title" })
       .sort(sort)
       .skip(skip)
       .limit(limit)
