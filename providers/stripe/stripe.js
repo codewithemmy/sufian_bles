@@ -1,13 +1,11 @@
 const mongoose = require("mongoose")
-const { v4: uuidv4 } = require("uuid")
 const { config } = require("../../core/config")
 const {
   TransactionRepository,
 } = require("../../files/transaction/transaction.repository")
 const { UserRepository } = require("../../files/user/user.repository")
+const { OrderService } = require("../../files/order/order.service")
 const stripe = require("stripe")(config.STRIPE_SECRET_KEY)
-
-const uuid = uuidv4()
 
 class StripePaymentService {
   checkSuccessStatus(status, gatewayResponse) {
@@ -41,7 +39,7 @@ class StripePaymentService {
   // }
 
   async createCheckOutSession(paymentPayload) {
-    const { priceId, quantity, userId } = paymentPayload
+    const { priceId, quantity, userId, uuid } = paymentPayload
 
     const user = await UserRepository.findSingleUserWithParams({
       _id: new mongoose.Types.ObjectId(userId),
@@ -76,6 +74,46 @@ class StripePaymentService {
       return session
     } catch (error) {
       return { success: false, msg: error.message }
+    }
+  }
+  async retrieveCheckOutSession(payload) {
+    const { uuid, userId } = payload
+    try {
+      const user = await UserRepository.findSingleUserWithParams({
+        _id: new mongoose.Types.ObjectId(userId),
+      })
+
+      if (!user) return { success: false, msg: `user not found` }
+
+      const transaction = await TransactionRepository.fetchOne({
+        userId: new mongoose.Types.ObjectId(userId),
+        transactionUuid: uuid,
+      })
+
+      if (!transaction) return { success: false, msg: `transaction not found` }
+
+      const session = await stripe.checkout.sessions.retrieve(
+        `${transaction.sessionId}`
+      )
+
+      transaction.status = session.status
+      await transaction.save()
+      console.log("cost")
+      //if payment is successful, subscription should be created
+      const order = await OrderService.createOrder({
+        userId: new mongoose.Types.ObjectId(userId),
+        name: transaction.name,
+        email: transaction.email,
+        orderValue: transaction.cost,
+        subscriptionPlanId: transaction.subscriptionId,
+        transactionId: transaction._id,
+      })
+
+      if (!order) return { success: false, msg: `unable to create order` }
+
+      return session
+    } catch (error) {
+      console.log("error", error.message)
     }
   }
 }

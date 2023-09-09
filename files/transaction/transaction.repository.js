@@ -31,7 +31,7 @@ class TransactionRepository {
         ...transactionPayload,
       },
       { ...update },
-      { rawResult: true } //returns details about the update
+      { new: true, runValidators: true } //returns details about the update
     )
   }
 }

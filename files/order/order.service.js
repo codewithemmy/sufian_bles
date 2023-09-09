@@ -10,7 +10,7 @@ const { TransactionMessages } = require("../transaction/transaction.messages")
 
 class OrderService {
   static async createOrder(payload) {
-    const { userId, subscriptionPlanId, amount, ...rest } = payload
+    const { userId, subscriptionPlanId, orderValue, ...rest } = payload
 
     const transaction = await TransactionRepository.fetchOne({
       userId: userId,
@@ -39,7 +39,7 @@ class OrderService {
       ...rest,
       orderId: `#${randomGen}`,
       orderName: subscriptionPlanId,
-      orderValue: amount,
+      orderValue,
       status,
       transaction: transaction._id,
     })
@@ -74,7 +74,6 @@ class OrderService {
       data: order,
     }
   }
-  
 
   static async fetchEnterpriseOrder(user) {
     const { enterpriseId } = user

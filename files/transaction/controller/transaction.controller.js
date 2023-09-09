@@ -5,18 +5,6 @@ const { CustomError } = require("../../../utils/errors")
 const { TransactionService } = require("../services/transaction.service")
 // const crypto = require("crypto")
 
-const verifyTransactionController = async (req, res, next) => {
-  const [error, data] = await manageAsyncOps(
-    TransactionService.verifyStripePaymentService(req.body)
-  )
-
-  if (error) return next(error)
-
-  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
-
-  return responseHandler(res, SUCCESS, data)
-}
-
 const getTransactionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     TransactionService.getTransactionService(req.query, res.locals.jwt)
@@ -40,6 +28,19 @@ const checkoutTransactionController = async (req, res, next) => {
 
   return responseHandler(res, SUCCESS, data)
 }
+const retrieveTransactionController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    TransactionService.retrieveCheckOutSession(req.query)
+  )
+
+  console.log("error", error)
+
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  return responseHandler(res, SUCCESS, data)
+}
 
 // const verifyCheckoutController = async (req, res, next) => {
 //   const [error, data] = await manageAsyncOps(
@@ -54,7 +55,7 @@ const checkoutTransactionController = async (req, res, next) => {
 // }
 
 module.exports = {
-  verifyTransactionController,
   getTransactionController,
   checkoutTransactionController,
+  retrieveTransactionController,
 }

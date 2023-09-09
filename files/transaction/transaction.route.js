@@ -3,14 +3,14 @@ const { checkSchema } = require("express-validator")
 const { isAuthenticated } = require("../../utils")
 
 const {
-  verifyTransactionController,
   getTransactionController,
   checkoutTransactionController,
+  retrieveTransactionController,
 } = require("./controller/transaction.controller")
 
-transactionRoute.patch("/verify", verifyTransactionController)
 transactionRoute.get("/", getTransactionController)
 transactionRoute.post("/checkout", checkoutTransactionController)
+transactionRoute.get("/verify", retrieveTransactionController)
 
 //routes
 module.exports = transactionRoute

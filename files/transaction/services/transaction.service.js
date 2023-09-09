@@ -1,4 +1,5 @@
 const { default: mongoose } = require("mongoose")
+const { v4: uuidv4 } = require("uuid")
 const { StripePaymentService } = require("../../../providers/stripe/stripe")
 const {
   TransactionFailure,
@@ -11,6 +12,8 @@ const { TransactionRepository } = require("../transaction.repository")
 const { queryConstructor } = require("../../../utils")
 const { OrderRepository } = require("../../order/order.repository")
 const { OrderService } = require("../../order/order.service")
+
+const uuid = uuidv4()
 
 class TransactionService {
   static paymentProvider
@@ -78,6 +81,7 @@ class TransactionService {
       priceId,
       quantity,
       userId,
+      uuid,
     })
 
     if (!checkout)
@@ -89,8 +93,18 @@ class TransactionService {
 
     const { id, amount_total } = checkout
 
-    if (confirmTransaction)
-      return { success: false, msg: `duplicate transaction` }
+    if (confirmTransaction) {
+      await TransactionRepository.updateTransactionDetails(
+        { priceId },
+        { sessionId: id }
+      )
+
+      return {
+        success: true,
+        msg: TransactionSuccess.INITIATE,
+        data: checkout,
+      }
+    }
 
     await TransactionRepository.create({
       name: user.fullName,
@@ -99,6 +113,7 @@ class TransactionService {
       userId,
       priceId,
       channel,
+      transactionUuid: uuid,
       sessionId: id,
       subscriptionId,
     })
@@ -110,23 +125,19 @@ class TransactionService {
     }
   }
 
-  // static async verifyCheckoutSession(payload) {
-  //   const { priceId } = payload
+  static async retrieveCheckOutSession(payload) {
+    await this.getConfig()
+    const session = await this.paymentProvider.retrieveCheckOutSession(payload)
 
-  //   await this.getConfig()
-  //   const checkout = await this.paymentProvider.verifyCheckOutSession({
-  //     priceId,
-  //   })
+    if (!session)
+      return { success: false, msg: `unable to unable to verify status` }
 
-  //   if (!checkout)
-  //     return { success: false, msg: `unable to successfully checkout` }
-
-  //   return {
-  //     success: true,
-  //     msg: TransactionSuccess.INITIATE,
-  //     data: checkout,
-  //   }
-  // }
+    return {
+      success: true,
+      msg: TransactionSuccess.INITIATE,
+      data: session,
+    }
+  }
 
   // static async getTransactionService(payload, locals) {
   //   const { error, params, limit, skip, sort } = queryConstructor(
