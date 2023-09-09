@@ -31,8 +31,10 @@ const getTransactionController = async (req, res, next) => {
 
 const checkoutTransactionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    TransactionService.initiateCheckoutSession(req.body, req.headers.host)
+    TransactionService.initiateCheckoutSession(req.body)
   )
+
+  console.log("error", error)
 
   if (error) return next(error)
 

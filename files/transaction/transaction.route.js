@@ -8,8 +8,6 @@ const {
   checkoutTransactionController,
 } = require("./controller/transaction.controller")
 
-// transactionRoute.use(isAuthenticated)
-
 transactionRoute.patch("/verify", verifyTransactionController)
 transactionRoute.get("/", getTransactionController)
 transactionRoute.post("/checkout", checkoutTransactionController)

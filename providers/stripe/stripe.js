@@ -41,9 +41,7 @@ class StripePaymentService {
   // }
 
   async createCheckOutSession(paymentPayload) {
-    const { priceId, email, quantity, userId, host } = paymentPayload
-
-    console.log("host", host)
+    const { priceId, quantity, userId } = paymentPayload
 
     const user = await UserRepository.findSingleUserWithParams({
       _id: new mongoose.Types.ObjectId(userId),
@@ -71,13 +69,12 @@ class StripePaymentService {
         ],
         customer: user.stripeCustomerId,
         mode: `payment`,
-        success_url: `http://${host}/payment-success?userId=${user._id}&uuid=${uuid}`,
-        cancel_url: `http://${host}/user/service?userId=${user._id}&uuid=${uuid}`,
+        success_url: `${process.env.STRIPE_SUCCESS_CALLBACK}/payment-success?userId=${user._id}&uuid=${uuid}`,
+        cancel_url: `${process.env.STRIPE_CANCEL_CALLBACK}/user/service?userId=${user._id}&uuid=${uuid}`,
       })
 
       return session
     } catch (error) {
-      // console.log("error", )
       return { success: false, msg: error.message }
     }
   }

@@ -78,7 +78,6 @@ class TransactionService {
       priceId,
       quantity,
       userId,
-      host,
     })
 
     if (!checkout)
