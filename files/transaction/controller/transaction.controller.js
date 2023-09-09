@@ -5,22 +5,6 @@ const { CustomError } = require("../../../utils/errors")
 const { TransactionService } = require("../services/transaction.service")
 // const crypto = require("crypto")
 
-const paymentIntentTransactionController = async (req, res, next) => {
-  const [error, data] = await manageAsyncOps(
-    TransactionService.initiatePaymentIntentTransaction(req.body)
-  )
-
-  if (error) return next(error)
-
-  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
-
-  return responseHandler(res, SUCCESS, data)
-}
-
-module.exports = {
-  paymentIntentTransactionController,
-}
-
 const verifyTransactionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     TransactionService.verifyStripePaymentService(req.body)
@@ -47,7 +31,7 @@ const getTransactionController = async (req, res, next) => {
 
 const checkoutTransactionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    TransactionService.initiateCheckoutSession(req.body)
+    TransactionService.initiateCheckoutSession(req.body, req.headers.host)
   )
 
   if (error) return next(error)
@@ -70,9 +54,7 @@ const checkoutTransactionController = async (req, res, next) => {
 // }
 
 module.exports = {
-  paymentIntentTransactionController,
   verifyTransactionController,
   getTransactionController,
   checkoutTransactionController,
-  // verifyCheckoutController,
 }

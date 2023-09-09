@@ -21,7 +21,7 @@ const TransactionSchema = new mongoose.Schema(
       required: true,
       enum: ["stripe", "other"],
     },
-    transactionId: {
+    sessionId: {
       type: String,
     },
     priceId: {

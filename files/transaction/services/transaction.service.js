@@ -19,27 +19,6 @@ class TransactionService {
     this.paymentProvider = new StripePaymentService()
   }
 
-  static async initiatePaymentIntentTransaction(payload) {
-    const { amount, userId, channel, subscriptionId } = payload
-
-    await this.getConfig()
-    const paymentDetails = await this.paymentProvider.createPaymentIntent({
-      amount,
-      channel,
-      subscriptionId,
-      userId,
-    })
-
-    if (!paymentDetails)
-      return { success: false, msg: `unable to make or create payment intent` }
-
-    return {
-      success: true,
-      msg: TransactionSuccess.INITIATE,
-      data: paymentDetails,
-    }
-  }
-
   static async verifyStripePaymentService(payload) {
     const { transactionId, status, subscriptionPlanId } = payload
 
@@ -85,21 +64,21 @@ class TransactionService {
     }
   }
 
-  static async initiateCheckoutSession(payload) {
+  static async initiateCheckoutSession(payload, host) {
     const { priceId, userId, channel, subscriptionId, quantity } = payload
 
     const user = await UserRepository.findSingleUserWithParams({
       _id: new mongoose.Types.ObjectId(userId),
     })
+
     if (!user) return { success: false, msg: `user not found` }
 
     await this.getConfig()
     const checkout = await this.paymentProvider.createCheckOutSession({
       priceId,
-      userId,
-      channel,
-      subscriptionId,
       quantity,
+      userId,
+      host,
     })
 
     if (!checkout)
@@ -109,8 +88,7 @@ class TransactionService {
       priceId,
     })
 
-    const { session } = checkout
-    const { id, amount_total } = session
+    const { id, amount_total } = checkout
 
     if (confirmTransaction)
       return { success: false, msg: `duplicate transaction` }
@@ -122,7 +100,7 @@ class TransactionService {
       userId,
       priceId,
       channel,
-      transactionId: id,
+      sessionId: id,
       subscriptionId,
     })
 
