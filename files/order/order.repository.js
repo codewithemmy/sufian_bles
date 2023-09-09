@@ -29,12 +29,13 @@ class OrderRepository {
       .select(select)
   }
 
-  // static async update(id, params) {
-  //   return Order.findOneAndUpdate(
-  //     { enterpriseId: new mongoose.Types.ObjectId(id) },
-  //     { ...params }
-  //   )
-  // }
+  static async updateOrder(id, params) {
+    return Order.findByIdAndUpdate(
+      { _id: new mongoose.Types.ObjectId(id) },
+      { ...params },
+      { new: true, runValidator: true }
+    )
+  }
 }
 
 module.exports = { OrderRepository }

@@ -11,6 +11,11 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    userId: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     orderName: {
       type: mongoose.Types.ObjectId,
       ref: "SubscriptionPlan",
@@ -27,6 +32,7 @@ const orderSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["Complete", "Active", "Delivered", "Cancelled", "Pending"],
+      default: "Pending",
     },
     expiresAt: {
       type: Number,

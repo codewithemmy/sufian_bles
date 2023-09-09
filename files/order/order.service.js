@@ -10,7 +10,7 @@ const { TransactionMessages } = require("../transaction/transaction.messages")
 
 class OrderService {
   static async createOrder(payload) {
-    const { userId, subscriptionPlanId, orderValue, ...rest } = payload
+    const { userId, orderName, orderValue, transactionId, ...rest } = payload
 
     const transaction = await TransactionRepository.fetchOne({
       userId: userId,
@@ -19,13 +19,13 @@ class OrderService {
     if (!transaction)
       return { success: false, msg: TransactionMessages.TRANSACTION_NOT_FOUND }
 
-    let status
+    // let status
 
-    if (transaction.status === "paid") {
-      status = "Active"
-    } else if (transaction.status === "failed") {
-      status = "Cancelled"
-    }
+    // if (transaction.status === "paid") {
+    //   status = "Active"
+    // } else if (transaction.status === "failed") {
+    //   status = "Cancelled"
+    // }
 
     const randomGen = AlphaNumeric(7, "number")
 
@@ -38,10 +38,10 @@ class OrderService {
     const order = await OrderRepository.create({
       ...rest,
       orderId: `#${randomGen}`,
-      orderName: subscriptionPlanId,
+      orderName,
+      userId,
       orderValue,
-      status,
-      transaction: transaction._id,
+      transactionId,
     })
 
     if (!order._id) return { success: false, msg: OrderMessages.CREATE_ERROR }

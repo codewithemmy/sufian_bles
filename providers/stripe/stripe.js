@@ -5,6 +5,7 @@ const {
 } = require("../../files/transaction/transaction.repository")
 const { UserRepository } = require("../../files/user/user.repository")
 const { OrderService } = require("../../files/order/order.service")
+const { OrderRepository } = require("../../files/order/order.repository")
 const stripe = require("stripe")(config.STRIPE_SECRET_KEY)
 
 class StripePaymentService {
@@ -98,18 +99,27 @@ class StripePaymentService {
 
       transaction.status = session.status
       await transaction.save()
-      console.log("cost")
+
       //if payment is successful, subscription should be created
-      const order = await OrderService.createOrder({
+
+      const confirmOrder = await OrderRepository.fetchOne({
+        orderName: transaction.subscriptionId,
         userId: new mongoose.Types.ObjectId(userId),
-        name: transaction.name,
-        email: transaction.email,
         orderValue: transaction.cost,
-        subscriptionPlanId: transaction.subscriptionId,
-        transactionId: transaction._id,
       })
 
-      if (!order) return { success: false, msg: `unable to create order` }
+      if (confirmOrder) {
+        confirmOrder.transactionId = transaction._id
+        await confirmOrder.save()
+        return session
+      }
+
+      await OrderService.createOrder({
+        userId: new mongoose.Types.ObjectId(userId),
+        orderName: transaction.subscriptionId,
+        orderValue: transaction.cost,
+        transactionId: transaction._id,
+      })
 
       return session
     } catch (error) {
