@@ -69,10 +69,8 @@ class StripePaymentService {
             quantity: quantity,
           },
         ],
-        customer: email,
+        customer: user.stripeCustomerId,
         mode: `payment`,
-        // success_url: `${process.env.DOMAIN_URL}?success=true`,
-        // cancel_url: `${process.env.DOMAIN_URL}?canceled=true`,
         success_url: `http://${host}/payment-success?userId=${user._id}&uuid=${uuid}`,
         cancel_url: `http://${host}/user/service?userId=${user._id}&uuid=${uuid}`,
       })
