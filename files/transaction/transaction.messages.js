@@ -1,5 +1,6 @@
 module.exports.TransactionSuccess = {
   INITIATE: "Successfully initiated transaction",
+  UPDATE: "transaction status updated",
 }
 
 module.exports.TransactionFailure = {

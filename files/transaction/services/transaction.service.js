@@ -134,8 +134,8 @@ class TransactionService {
 
     return {
       success: true,
-      msg: TransactionSuccess.INITIATE,
-      data: session,
+      msg: TransactionSuccess.UPDATE,
+      paymentStatus: session,
     }
   }
 

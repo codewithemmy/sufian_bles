@@ -85,7 +85,7 @@ class StripePaymentService {
       if (confirmOrder) {
         confirmOrder.transactionId = transaction._id
         await confirmOrder.save()
-        return session
+        return session.status
       }
 
       await OrderService.createOrder({
@@ -95,7 +95,7 @@ class StripePaymentService {
         transactionId: transaction._id,
       })
 
-      return session
+      return session.status
     } catch (error) {
       console.log("error", error.message)
     }
