@@ -53,6 +53,7 @@ class StripePaymentService {
       return { success: false, msg: error.message }
     }
   }
+
   async retrieveCheckOutSession(payload) {
     const { uuid, userId } = payload
     try {
@@ -80,6 +81,7 @@ class StripePaymentService {
         orderName: transaction.subscriptionId,
         userId: new mongoose.Types.ObjectId(userId),
         orderValue: transaction.cost,
+        transactionId: transaction._id,
       })
 
       if (confirmOrder) {
