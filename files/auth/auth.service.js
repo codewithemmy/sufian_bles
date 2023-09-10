@@ -27,7 +27,6 @@ class AuthService {
     await confirmOtp.save()
 
     /** send confirmation mail or sms to user */
-    
 
     return {
       success: true,
@@ -70,6 +69,7 @@ class AuthService {
       verificationOtp: otp,
     })
 
+    console.log("new", newPassword)
     if (!findUser) return { success: false, msg: AuthFailure.FETCH }
 
     findUser.password = await hashPassword(newPassword)

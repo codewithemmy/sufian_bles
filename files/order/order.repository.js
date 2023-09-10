@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose")
+const { default: mongoose, mongo } = require("mongoose")
 const { Order } = require("./order.model")
 const { LIMIT, SKIP, SORT } = require("../../constants")
 
@@ -18,9 +18,11 @@ class OrderRepository {
       sort = SORT,
       ...restOfPayload
     } = payload
-
+    let extra = {}
+    if (restOfPayload._id)
+      extra = { userId: new mongoose.Types.ObjectId(restOfPayload._id) }
     return await Order.find({
-      ...restOfPayload,
+      ...extra,
     })
       .populate({ path: "userId", select: "username fullName email" })
       .populate({ path: "orderName", select: "title" })
