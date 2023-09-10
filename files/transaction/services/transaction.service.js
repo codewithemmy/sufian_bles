@@ -119,20 +119,28 @@ class TransactionService {
     if (confirmOrder) {
       confirmOrder.transactionId = transaction._id
       confirmOrder.isConfirmed = true
+      confirmOrder.status = status = "complete" ? "Active" : "Pending"
       await confirmOrder.save()
-      return {
-        success: true,
-        msg: TransactionSuccess.UPDATE,
-        paymentStatus: status,
-      }
     }
 
-    await OrderService.createOrder({
-      userId: new mongoose.Types.ObjectId(userId),
-      orderName: transaction.subscriptionId,
-      orderValue: transaction.cost,
-      transactionId: transaction._id,
-    })
+    if (status === "complete") {
+      const order = await OrderService.createOrder({
+        userId: new mongoose.Types.ObjectId(userId),
+        orderName: transaction.subscriptionId,
+        orderValue: transaction.cost,
+        isConfirmed: true,
+        status: "Active",
+        transactionId: transaction._id,
+      })
+    } else {
+      await OrderService.createOrder({
+        userId: new mongoose.Types.ObjectId(userId),
+        orderName: transaction.subscriptionId,
+        orderValue: transaction.cost,
+        isConfirmed: true,
+        transactionId: transaction._id,
+      })
+    }
 
     return {
       success: true,
