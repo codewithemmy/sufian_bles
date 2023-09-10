@@ -44,7 +44,7 @@ class StripePaymentService {
         ],
         customer: user.stripeCustomerId,
         mode: `payment`,
-        success_url: `${process.env.STRIPE_SUCCESS_CALLBACK}/payment-success?userId=${user._id}&uuid=${uuid}`,
+        success_url: `${process.env.STRIPE_SUCCESS_CALLBACK}/user/payment-success?userId=${user._id}&uuid=${uuid}`,
         cancel_url: `${process.env.STRIPE_CANCEL_CALLBACK}/user/service?userId=${user._id}&uuid=${uuid}`,
       })
 
@@ -55,49 +55,9 @@ class StripePaymentService {
   }
 
   async retrieveCheckOutSession(payload) {
-    const { uuid, userId } = payload
     try {
-      const user = await UserRepository.findSingleUserWithParams({
-        _id: new mongoose.Types.ObjectId(userId),
-      })
-
-      if (!user) return { success: false, msg: `user not found` }
-
-      const transaction = await TransactionRepository.fetchOne({
-        userId: new mongoose.Types.ObjectId(userId),
-        transactionUuid: uuid,
-      })
-
-      if (!transaction) return { success: false, msg: `transaction not found` }
-
-      const session = await stripe.checkout.sessions.retrieve(
-        `${transaction.sessionId}`
-      )
-
-      transaction.status = session.status
-      await transaction.save()
-
-      const confirmOrder = await OrderRepository.fetchOne({
-        orderName: transaction.subscriptionId,
-        userId: new mongoose.Types.ObjectId(userId),
-        orderValue: transaction.cost,
-        transactionId: transaction._id,
-      })
-
-      if (confirmOrder) {
-        confirmOrder.transactionId = transaction._id
-        await confirmOrder.save()
-        return session.status
-      }
-
-      await OrderService.createOrder({
-        userId: new mongoose.Types.ObjectId(userId),
-        orderName: transaction.subscriptionId,
-        orderValue: transaction.cost,
-        transactionId: transaction._id,
-      })
-
-      return session.status
+      const session = await stripe.checkout.sessions.retrieve(`${payload}`)
+      return session
     } catch (error) {
       console.log("error", error.message)
     }

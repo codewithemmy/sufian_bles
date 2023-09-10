@@ -22,51 +22,6 @@ class TransactionService {
     this.paymentProvider = new StripePaymentService()
   }
 
-  static async verifyStripePaymentService(payload) {
-    const { transactionId, status, subscriptionPlanId } = payload
-
-    const transaction = await TransactionRepository.fetchOne({
-      transactionId: transactionId,
-    })
-
-    if (!transaction) return { success: false, msg: `transaction not found` }
-
-    if (transaction.status === "paid" || transaction.status === "failed")
-      return { success: false, msg: `transaction already updated` }
-
-    if (status === "succeeded") {
-      transaction.status = "paid"
-      await transaction.save()
-
-      //if payment is successful, subscription should be created
-      const order = await OrderService.createOrder({
-        userId: new mongoose.Types.ObjectId(transaction.userId),
-        name: transaction.name,
-        email: transaction.email,
-        amount: transaction.amount,
-        subscriptionPlanId,
-        transactionId: transaction._id,
-      })
-
-      if (!order) return { success: false, msg: `unable to create order` }
-
-      return {
-        success: true,
-        msg: `transaction status update successful`,
-      }
-    }
-
-    if (status === "failed") {
-      transaction.status = "failed"
-      await transaction.save()
-
-      return {
-        success: true,
-        msg: `transaction status update successful`,
-      }
-    }
-  }
-
   static async initiateCheckoutSession(payload, host) {
     const { priceId, userId, channel, subscriptionId, quantity } = payload
 
@@ -126,19 +81,65 @@ class TransactionService {
   }
 
   static async retrieveCheckOutSession(payload) {
-    await this.getConfig()
-    const session = await this.paymentProvider.retrieveCheckOutSession(payload)
+    const { uuid, userId } = payload
 
-    if (!session)
+    const user = await UserRepository.findSingleUserWithParams({
+      _id: new mongoose.Types.ObjectId(userId),
+    })
+
+    if (!user) return { success: false, msg: `user not found` }
+
+    const transaction = await TransactionRepository.fetchOne({
+      userId: new mongoose.Types.ObjectId(userId),
+      transactionUuid: uuid,
+    })
+
+    if (!transaction) return { success: false, msg: `transaction not found` }
+
+    await this.getConfig()
+    const session = await this.paymentProvider.retrieveCheckOutSession(
+      transaction.sessionId
+    )
+
+    if (!session.id)
       return { success: false, msg: `unable to unable to verify status` }
+
+    const { status } = session
+
+    transaction.status = status
+    await transaction.save()
+
+    const confirmOrder = await OrderRepository.fetchOne({
+      orderName: transaction.subscriptionId,
+      userId: new mongoose.Types.ObjectId(userId),
+      orderValue: transaction.cost,
+      transactionId: transaction._id,
+    })
+
+    if (confirmOrder) {
+      confirmOrder.transactionId = transaction._id
+      confirmOrder.isConfirmed = true
+      await confirmOrder.save()
+      return {
+        success: true,
+        msg: TransactionSuccess.UPDATE,
+        paymentStatus: status,
+      }
+    }
+
+    await OrderService.createOrder({
+      userId: new mongoose.Types.ObjectId(userId),
+      orderName: transaction.subscriptionId,
+      orderValue: transaction.cost,
+      transactionId: transaction._id,
+    })
 
     return {
       success: true,
       msg: TransactionSuccess.UPDATE,
-      paymentStatus: session,
+      paymentStatus: status,
     }
   }
-
   // static async getTransactionService(payload, locals) {
   //   const { error, params, limit, skip, sort } = queryConstructor(
   //     payload,
