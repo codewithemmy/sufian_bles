@@ -15,7 +15,9 @@ const createOrderController = async (req, res, next) => {
 }
 
 const fetchOrderController = async (req, res, next) => {
-  const [error, data] = await manageAsyncOps(OrderService.fetchOrder(req.query))
+  const [error, data] = await manageAsyncOps(
+    OrderService.fetchOrder(req.query, res.locals.jwt)
+  )
 
   if (error) return next(error)
 

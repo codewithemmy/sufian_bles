@@ -18,11 +18,9 @@ class OrderRepository {
       sort = SORT,
       ...restOfPayload
     } = payload
-    let extra = {}
-    if (restOfPayload._id)
-      extra = { userId: new mongoose.Types.ObjectId(restOfPayload._id) }
+   
     return await Order.find({
-      ...extra,
+      ...restOfPayload,
     })
       .populate({ path: "userId", select: "username fullName email" })
       .populate({ path: "orderName", select: "title" })

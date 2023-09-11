@@ -59,7 +59,7 @@ class OrderService {
     return { success: true, msg: OrderMessages.CREATE_SUCCESS }
   }
 
-  static async fetchOrder(payload) {
+  static async fetchOrder(payload, locals) {
     const { error, params, limit, skip, sort } = queryConstructor(
       payload,
       "createdAt",
@@ -68,11 +68,20 @@ class OrderService {
 
     if (error) return { success: false, msg: error }
 
+    const { _id, isAdmin } = locals
+
+    let extra = {}
+
+    if (!isAdmin) {
+      extra = { userId: new mongoose.Types.ObjectId(_id) }
+    }
+
     const order = await OrderRepository.fetch({
       ...params,
       limit,
       skip,
       sort,
+      ...extra,
     })
 
     if (order.length < 1)
