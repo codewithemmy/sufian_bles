@@ -15,6 +15,8 @@ class OrderService {
       status,
       isConfirmed,
       orderName,
+      selectedTire,
+      dateOfDelivery,
       orderValue,
       transactionId,
       ...rest
@@ -50,7 +52,9 @@ class OrderService {
       userId,
       status,
       isConfirmed,
+      selectedTire,
       orderValue,
+      dateOfDelivery,
       transactionId,
     })
 

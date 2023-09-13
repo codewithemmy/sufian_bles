@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose")
+const { default: mongoose, mongo } = require("mongoose")
 const { v4: uuidv4 } = require("uuid")
 const { StripePaymentService } = require("../../../providers/stripe/stripe")
 const {
@@ -12,6 +12,9 @@ const { TransactionRepository } = require("../transaction.repository")
 const { queryConstructor } = require("../../../utils")
 const { OrderRepository } = require("../../order/order.repository")
 const { OrderService } = require("../../order/order.service")
+const {
+  SubscriptionPlanRepository,
+} = require("../../subscription_plan/subscriptionPlan.repository")
 
 const uuid = uuidv4()
 
@@ -106,6 +109,11 @@ class TransactionService {
 
     const { status } = session
 
+    const { priceId } = transaction
+
+    let deliveryTime
+    let planType
+
     transaction.status = status
     await transaction.save()
 
@@ -115,22 +123,58 @@ class TransactionService {
       orderValue: transaction.cost,
       transactionId: transaction._id,
     })
+    console.log("order", confirmOrder)
 
     if (confirmOrder) {
       confirmOrder.transactionId = transaction._id
       confirmOrder.isConfirmed = true
-      confirmOrder.status = status = "complete" ? "Active" : "Pending"
+      confirmOrder.status = "active" ? "active" : "pending"
+      confirmOrder.selectedTire= planType,
       await confirmOrder.save()
+
+      return {
+        success: true,
+        msg: TransactionSuccess.UPDATE,
+        paymentStatus: status,
+      }
     }
 
     if (status === "complete") {
-      const order = await OrderService.createOrder({
+      const subscription = await SubscriptionPlanRepository.fetchOne({
+        $or: [
+          { "availablePlans.basic.priceId": priceId },
+          { "availablePlans.pro.priceId": priceId },
+          { "availablePlans.max.priceId": priceId },
+        ],
+      })
+
+      if (subscription.availablePlans.basic.priceId === priceId) {
+        deliveryTime = subscription.availablePlans.basic.deliveryTime
+        planType = "basic"
+      } else if (subscription.availablePlans.pro.priceId === priceId) {
+        deliveryTime = subscription.availablePlans.pro.deliveryTime
+        planType = "pro"
+      } else if (subscription.availablePlans.max.priceId === priceId) {
+        deliveryTime = subscription.availablePlans.max.deliveryTime
+        planType = "max"
+      }
+
+      const currentDate = new Date()
+      const futureDate = new Date(
+        currentDate.getTime() + deliveryTime * 24 * 60 * 60 * 1000
+      )
+
+      const futureDateISOString = futureDate.toISOString()
+
+      await OrderService.createOrder({
         userId: new mongoose.Types.ObjectId(userId),
         orderName: transaction.subscriptionId,
         orderValue: transaction.cost,
         isConfirmed: true,
-        status: "Active",
+        status: "active",
         transactionId: transaction._id,
+        dateOfDelivery: futureDateISOString,
+        selectedTire: planType,
       })
     } else {
       await OrderService.createOrder({
@@ -148,33 +192,32 @@ class TransactionService {
       paymentStatus: status,
     }
   }
-  // static async getTransactionService(payload, locals) {
-  //   const { error, params, limit, skip, sort } = queryConstructor(
-  //     payload,
-  //     "createdAt",
-  //     "Transaction"
-  //   )
-  //   if (error) return { success: false, msg: error }
+  static async getTransactionService(payload, locals) {
+    const { error, params, limit, skip, sort } = queryConstructor(
+      payload,
+      "createdAt",
+      "Transaction"
+    )
+    if (error) return { success: false, msg: error }
 
-  //   let teacher = { userId: new mongoose.Types.ObjectId(locals._id) }
+    // let teacher = { userId: new mongoose.Types.ObjectId(locals._id) }
 
-  //   const transaction = await TransactionRepository.fetchTransactionsByParams({
-  //     ...params,
-  //     limit,
-  //     skip,
-  //     sort,
-  //     ...teacher,
-  //   })
+    const transaction = await TransactionRepository.fetchTransactionsByParams({
+      ...params,
+      limit,
+      skip,
+      sort,
+    })
 
-  //   if (transaction.length < 1)
-  //     return { success: false, msg: `you don't have any transaction history` }
+    if (transaction.length < 1)
+      return { success: false, msg: `you don't have any transaction history` }
 
-  //   return {
-  //     success: true,
-  //     msg: `transaction fetched successfully`,
-  //     data: transaction,
-  //   }
-  // }
+    return {
+      success: true,
+      msg: `transaction fetched successfully`,
+      data: transaction,
+    }
+  }
 }
 
 module.exports = { TransactionService }

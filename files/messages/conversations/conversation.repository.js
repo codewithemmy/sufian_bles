@@ -15,16 +15,24 @@ class ConversationRepository {
       ...restOfPayload,
     })
       .populate("entityOneId", {
-        firstName: 1,
-        lastName: 1,
+        username: 1,
+        profileImage: 1,
+        fullName: 1,
+        accountType: 1,
         email: 1,
         profileImage: 1,
+        role: 1,
+        image: 1,
       })
       .populate("entityTwoId", {
-        firstName: 1,
-        lastName: 1,
+        username: 1,
+        profileImage: 1,
+        fullName: 1,
+        accountType: 1,
         email: 1,
         profileImage: 1,
+        role: 1,
+        image: 1,
       })
       .sort(sort)
       .skip(skip)

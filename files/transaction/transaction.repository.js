@@ -14,6 +14,7 @@ class TransactionRepository {
     const transaction = await Transaction.find({
       ...restOfPayload,
     })
+      .populate("subscriptionId")
       .sort(sort)
       .skip(skip)
       .limit(limit)

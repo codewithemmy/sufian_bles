@@ -29,10 +29,12 @@ const orderSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    dateOfDelivery: { type: Date, default: null },
+    selectedTire: { type: String },
     status: {
       type: String,
-      enum: ["Complete", "Active", "Delivered", "Cancelled", "Pending"],
-      default: "Pending",
+      enum: ["completed", "active", "delivered", "canceled ", "pending"],
+      default: "pending",
     },
     expiresAt: {
       type: Number,

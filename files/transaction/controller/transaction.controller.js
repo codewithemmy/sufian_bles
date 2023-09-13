@@ -7,9 +7,9 @@ const { TransactionService } = require("../services/transaction.service")
 
 const getTransactionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    TransactionService.getTransactionService(req.query, res.locals.jwt)
+    TransactionService.getTransactionService(req.query)
   )
-
+  console.log("error", error)
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
@@ -34,6 +34,7 @@ const retrieveTransactionController = async (req, res, next) => {
     TransactionService.retrieveCheckOutSession(req.query)
   )
 
+  console.log("error", error)
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
