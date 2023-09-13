@@ -6,11 +6,16 @@ const {
   updateOrderController,
 } = require("../order/order.controller")
 const { getUserController } = require("../user/controllers/profile.controller")
-const { adminSignUpController, adminLogin } = require("./admin.controller")
+const {
+  adminSignUpController,
+  adminLogin,
+  getAdminController,
+} = require("./admin.controller")
 
 //admin route
 adminRoute.route("/").post(adminSignUpController)
 adminRoute.route("/login").post(adminLogin)
+adminRoute.route("/profile").get(getAdminController)
 
 adminRoute.use(isAuthenticated)
 

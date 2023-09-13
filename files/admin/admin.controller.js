@@ -29,7 +29,7 @@ const adminLogin = async (req, res, next) => {
 
 const getAdminController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    AdminAuthService.getAdminService(req.body)
+    AdminAuthService.getAdminService(req.query)
   )
 
   if (error) return next(error)
