@@ -89,7 +89,7 @@ class OrderService {
     })
 
     if (order.length < 1)
-      return { success: false, msg: OrderMessages.NONE_FOUND }
+      return { success: true, msg: OrderMessages.NONE_FOUND, data: [] }
 
     return {
       success: true,
