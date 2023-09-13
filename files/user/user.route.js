@@ -10,11 +10,16 @@ const {
 } = require("../user/controllers/user.controller")
 const {
   updateUserProfileController,
+  getUserProfileController,
 } = require("./controllers/profile.controller")
 
 //routes
 userRoute.route("/").post(createUserController)
 userRoute.route("/login").post(userLoginController)
+
+userRoute.route("/").get(getUserProfileController)
+
+userRoute.use(isAuthenticated)
 
 userRoute.patch(
   "/update/:id",
