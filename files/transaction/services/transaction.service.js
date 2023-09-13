@@ -47,6 +47,7 @@ class TransactionService {
 
     const confirmTransaction = await TransactionRepository.fetchOne({
       priceId,
+      userId,
     })
 
     const { id, amount_total } = checkout
