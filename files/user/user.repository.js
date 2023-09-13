@@ -43,24 +43,10 @@ class UserRepository {
   }
 
   static async updateUserById(id, params) {
-    return User.findByIdAndUpdate(
+    return await User.findOneAndUpdate(
       { _id: new mongoose.Types.ObjectId(id) },
-      { ...params },
-      { new: true, runValidators: true }
+      { $set: { ...params } }
     )
-  }
-
-  static async countsByStatus(query) {
-    const userCount = await User.countDocuments().where({ ...query })
-    return userCount
-  }
-
-  static async deleteAccount(payload) {
-    const deleteAccount = await User.findOneAndDelete({
-      ...payload,
-    })
-
-    return deleteAccount
   }
 }
 

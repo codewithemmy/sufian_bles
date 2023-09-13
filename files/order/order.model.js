@@ -43,6 +43,12 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
+
+const order = mongoose.model("Order", orderSchema, "order")
+
+module.exports = { Order: order }
+
+
 // cron.schedule("0 0 * * *", async () => {
 //   const subscriptions = await subscription.find({ expiresAt: { $gt: 0 } })
 
@@ -51,7 +57,3 @@ const orderSchema = new mongoose.Schema(
 //     await subscription.updateOne({ _id: sub._id }, { expiresAt: newExpiresAt })
 //   }
 // })
-
-const order = mongoose.model("Order", orderSchema, "order")
-
-module.exports = { Order: order }

@@ -18,7 +18,7 @@ class OrderRepository {
       sort = SORT,
       ...restOfPayload
     } = payload
-   
+
     return await Order.find({
       ...restOfPayload,
     })
@@ -33,7 +33,7 @@ class OrderRepository {
   static async updateOrder(id, params) {
     return Order.findByIdAndUpdate(
       { _id: new mongoose.Types.ObjectId(id) },
-      { ...params },
+      { $set: { ...params } },
       { new: true, runValidator: true }
     )
   }

@@ -123,14 +123,12 @@ class TransactionService {
       orderValue: transaction.cost,
       transactionId: transaction._id,
     })
-    console.log("order", confirmOrder)
 
     if (confirmOrder) {
       confirmOrder.transactionId = transaction._id
       confirmOrder.isConfirmed = true
       confirmOrder.status = "active" ? "active" : "pending"
-      confirmOrder.selectedTire= planType,
-      await confirmOrder.save()
+      ;(confirmOrder.selectedTire = planType), await confirmOrder.save()
 
       return {
         success: true,

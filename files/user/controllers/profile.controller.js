@@ -3,19 +3,7 @@ const { responseHandler } = require("../../../core/response")
 const { manageAsyncOps, fileModifier } = require("../../../utils")
 const { CustomError } = require("../../../utils/errors")
 const { ProfileService } = require("../services/profile.service")
-
-const profileImageController = async (req, res, next) => {
-  const value = fileModifier(req)
-  const [error, data] = await manageAsyncOps(
-    ProfileService.profileImage(value, res.locals.jwt)
-  )
-
-  if (error) return next(error)
-
-  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
-
-  return responseHandler(res, SUCCESS, data)
-}
+const { UserService } = require("../services/user.service")
 
 const getUserController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
@@ -64,38 +52,23 @@ const getUserProfileController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
-const generateImageController = async (req, res, next) => {
+const updateUserProfileController = async (req, res, next) => {
+  let value = await fileModifier(req)
   const [error, data] = await manageAsyncOps(
-    ProfileService.generateImageService(req.body)
+    ProfileService.updateProfileService(req.params.id, value)
   )
 
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
 
-  return responseHandler(res, SUCCESS, data)
-}
-
-const IEPGoalController = async (req, res, next) => {
-  const [error, data] = await manageAsyncOps(
-    ProfileService.IEPGoalService(req.body)
-  )
-
-  console.log("error", error)
-
-  if (error) return next(error)
-
-  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
-
-  return responseHandler(res, SUCCESS, data)
+  return responseHandler(res, 200, data)
 }
 
 module.exports = {
-  profileImageController,
   getUserController,
   updateUserController,
   changePasswordController,
   getUserProfileController,
-  generateImageController,
-  IEPGoalController,
+  updateUserProfileController,
 }

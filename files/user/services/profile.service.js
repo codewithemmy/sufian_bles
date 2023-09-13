@@ -17,6 +17,22 @@ const {
 } = require("../messages/profile.messages")
 
 class ProfileService {
+  static async updateProfileService(id, payload) {
+    const { body, image } = payload
+
+    const userprofile = await UserRepository.updateUserById(id, {
+      profileImage: image,
+      ...body,
+    })
+
+    if (!userprofile) return { success: false, msg: UserFailure.UPDATE }
+
+    return {
+      success: true,
+      msg: UserSuccess.UPDATE,
+    }
+  }
+
   static async profileImage(payload, locals) {
     const { image } = payload
     const updateUser = await UserRepository.updateUserProfile(
@@ -100,95 +116,6 @@ class ProfileService {
       success: true,
       msg: UserSuccess.FETCH,
       data: user,
-    }
-  }
-
-  static async generateImageService(payload) {
-    const { prompt, size } = payload
-
-    const result = await generateImage(prompt, size)
-
-    if (!result) return { success: false, msg: `unable to fetch image` }
-
-    return {
-      success: true,
-      msg: UserSuccess.FETCH,
-      data: result,
-    }
-  }
-
-  static async IEPGoalService(payload) {
-    const studentName = payload.studentName
-    let prompt
-
-    if (payload.type === "goal") {
-      const {
-        studentName,
-        studentGrade,
-        areaOfNeed,
-        struggle,
-        IEPDate,
-        baseLine,
-        studentInterest,
-        criteria,
-      } = payload
-
-      prompt = `determine an IEP for ${studentName} with grade ${studentGrade} which area of need is ${areaOfNeed} that 
-    struggle in ${struggle}. Targeting this date ${IEPDate} as objective to meet this baseline ${baseLine}, considering 
-    ${studentName} interest which are ${studentInterest} and criteria ${criteria} to be met. what will be the Individualized 
-    Education Plan for ${studentName}.
-    Return response in the following JSON parsable format:
-  {
-    "goal": "answer", 
-    "IEP": "answer"
-  }
-`
-    }
-
-    if (payload.type === "accommodation") {
-      const { studentName, goal, information } = payload
-      prompt = `based on ${studentName} with this goal: ${goal}. What is your Individualized 
-    Education Plan (IEP) suggestion considering this: ${information}.
-    Return response in the following JSON parsable format: 
-
-  {
-    "accommodation": "answer"
-  }
-`
-    }
-
-    if (payload.type === "presentLevel") {
-      const { studentName, goal, information } = payload
-      prompt = `based on ${studentName} with this goal: ${goal}. What is the Individualized 
-    Education Plan (IEP) present level for ${studentName} considering this: ${information}.
-    Return response in the following JSON parsable format:
-  {
-    "presentLevel": "answer"
-  }
-`
-    }
-
-    if (payload.type === "progressMonitoring") {
-      const { studentName, goal } = payload
-      prompt = `As a teacher, using Individualized 
-    Education Plan (IEP) - List or outline different ways to monitor the progress of ${studentName} with this goal: ${goal}.
-    Return response in the following JSON parsable format:
-  {
-    "progressMonitoring": "answer"
-  }
-`
-    }
-
-    const result = await completionIEP(prompt)
-
-    if (!result)
-      return { success: false, msg: `something went wrong, try again` }
-
-    return {
-      success: true,
-      msg: `IEP fetched successfully`,
-      data: result,
-      student: studentName,
     }
   }
 }
