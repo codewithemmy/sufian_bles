@@ -9,7 +9,7 @@ const { queryConstructor } = require("../../../utils")
 
 class TextService {
   static async sendText(value, textPayload) {
-    const { recipientId, recipient, message, orderType } = value.body
+    const { recipientId, recipient, message, orderId } = value.body
     const { image } = value
 
     const {
@@ -28,10 +28,12 @@ class TextService {
         {
           entityOneId: new mongoose.Types.ObjectId(_id),
           entityTwoId: new mongoose.Types.ObjectId(recipientId),
+          orderId,
         },
         {
           entityOneId: new mongoose.Types.ObjectId(recipientId),
           entityTwoId: new mongoose.Types.ObjectId(_id),
+          orderId,
         },
       ],
     })
@@ -42,7 +44,7 @@ class TextService {
         entityOne: isAdmin ? "Admin" : "User",
         entityTwoId: new mongoose.Types.ObjectId(recipientId),
         entityTwo: recipient,
-        orderType,
+        orderId,
       })
       conversationId = newConversation._id
       conversation = newConversation

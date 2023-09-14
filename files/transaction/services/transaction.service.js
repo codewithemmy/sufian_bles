@@ -118,27 +118,6 @@ class TransactionService {
     transaction.status = status
     await transaction.save()
 
-    const confirmOrder = await OrderRepository.fetchOne({
-      orderName: transaction.subscriptionId,
-      userId: new mongoose.Types.ObjectId(userId),
-      orderValue: transaction.cost,
-      transactionId: transaction._id,
-    })
-
-    if (confirmOrder) {
-      confirmOrder.transactionId = transaction._id
-      confirmOrder.isConfirmed = true
-      confirmOrder.status = "active" ? "active" : "pending"
-      confirmOrder.selectedTire = planType
-      await confirmOrder.save()
-
-      return {
-        success: true,
-        msg: TransactionSuccess.UPDATE,
-        paymentStatus: status,
-      }
-    }
-
     if (status === "complete") {
       const subscription = await SubscriptionPlanRepository.fetchOne({
         $or: [

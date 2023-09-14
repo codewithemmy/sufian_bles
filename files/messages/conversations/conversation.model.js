@@ -18,7 +18,7 @@ const conversationSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       refPath: "entityTwo",
     },
-    orderType: {
+    orderId: {
       type: String,
     },
     updatedAt: { type: Date, default: Date.now },
