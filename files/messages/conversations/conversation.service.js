@@ -29,8 +29,9 @@ class ConversationService {
 
     if (conversations.length === 0)
       return {
-        success: false,
+        success: true,
         msg: ConversationMessages.NO_CONVERSATIONS_FETCHED,
+        data: [],
       }
 
     return {
