@@ -2,7 +2,7 @@ const { default: mongoose } = require("mongoose")
 const { SocketRepository } = require("./sockets.repository")
 const fs = require("fs")
 
-const userDetails = []
+let userDetails = []
 module.exports.socketConnection = async (io) => {
   io.on("connection", async (socket) => {
     console.log(`⚡⚡: ${socket.id} user just connected!`)
