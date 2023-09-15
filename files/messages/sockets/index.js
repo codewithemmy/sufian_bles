@@ -6,21 +6,19 @@ let userDetails = []
 module.exports.socketConnection = async (io) => {
   io.on("connection", async (socket) => {
     console.log(`⚡⚡: ${socket.id} user just connected!`)
-
-    socket.on("addUser", (userId) => {
-      console.log({ userId, socketId: socket._id })
-      userDetails.push([{ userId, socketId: socket._id }])
-    })
-
-    io.emit("userDetails", `${userDetails}, this is for io `)
-    socket.emit("userDetails", `${userDetails}, this is for socket `)
-
-    socket.on("typing", (data) => {
-      if (data.typing == true) io.emit("display", data)
-      else io.emit("display", data)
-    })
-
     try {
+      socket.on("addUser", (userId) => {
+        console.log({ userId, socketId: socket._id })
+        userDetails.push([{ userId, socketId: socket._id }])
+      })
+
+      socket.emit("userDetails", `${userDetails}, this is for socket `)
+
+      socket.on("typing", (data) => {
+        if (data.typing == true) io.emit("display", data)
+        else io.emit("display", data)
+      })
+
       //check to delete the socket id with the userId
       await SocketRepository.deleteMany({
         userId: new mongoose.Types.ObjectId(obj.userId),
