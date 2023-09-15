@@ -4,7 +4,15 @@ const fs = require("fs")
 
 module.exports.socketConnection = async (io) => {
   io.on("connection", async (socket) => {
-    console.log(`⚡: ${socket.id} user just connected!`)
+    console.log(`⚡⚡: ${socket.id} user just connected!`)
+
+    socket.on("addUser", (userId) => {
+      console.log({ userId, socketId: socket._id })
+      userDetails.push([{ userId, socketId: socket._id }])
+    })
+
+    io.emit("userDetails", `${userDetails}, this is for io `)
+    socket.emit("userDetails", `${userDetails}, this is for socket `)
     socket.on("join", async (obj) => {
       try {
         //check to delete the socket id with the userId
