@@ -6,40 +6,43 @@ let userDetails = []
 module.exports.socketConnection = async (io) => {
   io.on("connection", async (socket) => {
     console.log(`⚡⚡: ${socket.id} user just connected!`)
-    try {
-      socket.on("addUser", (userId) => {
-        console.log({ userId, socketId: socket._id })
-        userDetails.push([{ userId, socketId: socket._id }])
-      })
 
-      socket.emit("userDetails", `${userDetails}, this is for socket `)
+    socket.on("addUser", (userId) => {
+      console.log({ userId, socketId: socket._id })
+      userDetails.push([{ userId, socketId: socket._id }])
+    })
 
-      socket.on("typing", (data) => {
-        if (data.typing == true) io.emit("display", data)
-        else io.emit("display", data)
-      })
+    io.emit("userDetails", `${userDetails}, this is for io `)
 
-      //check to delete the socket id with the userId
-      await SocketRepository.deleteMany({
-        userId: new mongoose.Types.ObjectId(obj.userId),
-      })
+    socket.on("typing", (data) => {
+      if (data.typing == true) io.emit("display", data)
+      else io.emit("display", data)
+    })
 
-      //create a new socket
-      const socketDetails = await SocketRepository.createSocket({
-        socketId: socket.id,
-        userId: obj.userId,
-        modelType: obj.type,
-      })
+    socket.on("join", async (obj) => {
+      try {
+        //check to delete the socket id with the userId
+        await SocketRepository.deleteMany({
+          userId: new mongoose.Types.ObjectId(obj.userId),
+        })
 
-      //emit error sockets is not generated
-      if (!socketDetails._id) {
-        socket.emit("join", `Error: ${data.message}`)
-      } else {
-        socket.emit("join", "Connection Successful")
+        //create a new socket
+        const socketDetails = await SocketRepository.createSocket({
+          socketId: socket.id,
+          userId: obj.userId,
+          modelType: obj.type,
+        })
+
+        //emit error sockets is not generated
+        if (!socketDetails._id) {
+          socket.emit("join", `Error: ${data.message}`)
+        } else {
+          socket.emit("join", "Connection Successful")
+        }
+      } catch (error) {
+        console.log("socket error", error)
       }
-    } catch (error) {
-      console.log("socket error", error)
-    }
+    })
 
     socket.on("disconnect", async () => {
       await SocketRepository.deleteUser(socket.id)
