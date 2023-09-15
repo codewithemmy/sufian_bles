@@ -13,6 +13,15 @@ module.exports.socketConnection = async (io) => {
 
     io.emit("userDetails", `${userDetails}, this is for io `)
     socket.emit("userDetails", `${userDetails}, this is for socket `)
+
+
+     socket.on('typing', (data)=>{
+      if(data.typing==true)
+         io.emit('display', data)
+      else
+         io.emit('display', data)
+    })
+    
     socket.on("join", async (obj) => {
       try {
         //check to delete the socket id with the userId
