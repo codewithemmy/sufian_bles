@@ -19,7 +19,7 @@ class ConversationService {
         ...conversationPayload,
       }
     )
-    const texts = await TextRepository.getTextsByParams({
+    const chats = await TextRepository.getTextsByParams({
       $or: [
         { senderId: new mongoose.Types.ObjectId(userId) },
         { recipientId: new mongoose.Types.ObjectId(userId) },
@@ -33,13 +33,13 @@ class ConversationService {
         data: [],
       }
 
-    if (texts.length === 0)
+    if (chats.length === 0)
       return { success: true, msg: TextMessages.FETCH_NONE, data: [] }
 
     return {
       success: true,
       msg: ConversationMessages.FETCH,
-      data: { conversations, texts },
+      data: { conversations, chats },
     }
   }
 
