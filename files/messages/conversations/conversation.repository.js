@@ -41,6 +41,34 @@ class ConversationRepository {
     return conversations
   }
 
+  static async getConversationsByParams(conversationPayload) {
+    const conversations = await Conversation.find({
+      ...conversationPayload,
+    })
+      .populate("entityOneId", {
+        username: 1,
+        profileImage: 1,
+        fullName: 1,
+        accountType: 1,
+        email: 1,
+        profileImage: 1,
+        role: 1,
+        image: 1,
+      })
+      .populate("entityTwoId", {
+        username: 1,
+        profileImage: 1,
+        fullName: 1,
+        accountType: 1,
+        email: 1,
+        profileImage: 1,
+        role: 1,
+        image: 1,
+      })
+
+    return conversations
+  }
+
   static async updateConversation(conversationPayload, update) {
     return Conversation.findOneAndUpdate({ ...conversationPayload }, update)
   }
