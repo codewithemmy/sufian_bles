@@ -3,6 +3,7 @@ const { queryConstructor } = require("../../../utils")
 const { ConversationRepository } = require("./conversation.repository")
 const { ConversationMessages } = require("./conversation.messages")
 const { TextRepository } = require("../texts/text.repository")
+const { TextMessages } = require("../texts/text.messages")
 
 class ConversationService {
   static async createConversation(conversationPayload) {
@@ -10,6 +11,12 @@ class ConversationService {
   }
 
   static async fetchConversations(conversationPayload, userId) {
+    const { _id } = conversationPayload
+    let chatId
+    if (_id) {
+      chatId = { conversationId: new mongoose.Types.ObjectId(_id) }
+    }
+
     const conversations = await ConversationRepository.getConversationsByParams(
       {
         $or: [
@@ -24,6 +31,7 @@ class ConversationService {
         { senderId: new mongoose.Types.ObjectId(userId) },
         { recipientId: new mongoose.Types.ObjectId(userId) },
       ],
+      ...chatId,
     })
 
     if (conversations.length === 0)
@@ -39,7 +47,8 @@ class ConversationService {
     return {
       success: true,
       msg: ConversationMessages.FETCH,
-      data: { conversations, chats },
+      conversations,
+      chats,
     }
   }
 
