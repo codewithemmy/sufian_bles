@@ -17,8 +17,8 @@ class TextService {
       isAdmin,
       io,
       image: senderImage,
-      firstName,
-      lastName,
+      fullName,
+      username,
       email,
     } = textPayload
 
@@ -83,7 +83,8 @@ class TextService {
         image,
         sender: {
           image: senderImage,
-          name: lastName ? lastName : firstName,
+          name: fullName,
+          username: username,
           email,
         },
       })
