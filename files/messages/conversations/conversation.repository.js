@@ -34,6 +34,7 @@ class ConversationRepository {
         role: 1,
         image: 1,
       })
+      .populate("lastMessage")
       .sort(sort)
       .skip(skip)
       .limit(limit)
