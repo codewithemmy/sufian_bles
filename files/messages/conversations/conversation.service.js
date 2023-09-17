@@ -45,9 +45,9 @@ class ConversationService {
     if (chats.length === 0)
       return { success: true, msg: TextMessages.FETCH_NONE, data: [] }
 
-    let conversation = { chatId: `${conversations[0]._id}` }
+    // let conversation = { chatId: `${conversations[0]._id}` }
 
-    const newResult = [conversation, ...conversations, ...chats]
+    const newResult = [...conversations, ...chats]
 
     return {
       success: true,
