@@ -44,11 +44,12 @@ class ConversationService {
     if (chats.length === 0)
       return { success: true, msg: TextMessages.FETCH_NONE, data: [] }
 
+    const newResult = [...conversations, ...chats]
+
     return {
       success: true,
       msg: ConversationMessages.FETCH,
-      conversations,
-      chats,
+      data: newResult,
     }
   }
 
