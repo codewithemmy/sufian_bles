@@ -21,6 +21,9 @@ const conversationSchema = new mongoose.Schema(
     orderId: {
       type: String,
     },
+    lastMessage: {
+      type: String,
+    },
     updatedAt: { type: Date, default: Date.now },
   },
   { timestamps: { createdAt: true, updatedAt: false } }

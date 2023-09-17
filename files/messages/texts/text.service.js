@@ -21,7 +21,10 @@ class TextService {
       username,
       email,
     } = textPayload
-
+    let lastMessage
+    if (!isAdmin) {
+      lastMessage = message
+    }
     let conversationId
     let conversation = await ConversationRepository.findSingleConversation({
       $or: [
@@ -69,7 +72,7 @@ class TextService {
     // updating conversation updatedAt so the conversation becomes the most recent
     await ConversationRepository.updateConversation(
       { _id: new mongoose.Types.ObjectId(conversationId) },
-      { updatedAt: new Date() }
+      { updatedAt: new Date(), lastMessage }
     )
 
     const socketDetails = await SocketRepository.findSingleSocket({
