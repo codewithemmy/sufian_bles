@@ -26,6 +26,7 @@ class ConversationService {
         ...conversationPayload,
       }
     )
+
     const chats = await TextRepository.getTextsByParams({
       $or: [
         { senderId: new mongoose.Types.ObjectId(userId) },
@@ -44,7 +45,9 @@ class ConversationService {
     if (chats.length === 0)
       return { success: true, msg: TextMessages.FETCH_NONE, data: [] }
 
-    const newResult = [...conversations, ...chats]
+    let conversation = { chatId: `${conversations[0]._id}` }
+
+    const newResult = [conversation, ...conversations, ...chats]
 
     return {
       success: true,
