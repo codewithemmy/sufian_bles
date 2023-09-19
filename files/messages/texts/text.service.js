@@ -12,15 +12,8 @@ class TextService {
     const { recipientId, recipient, message, orderId } = value.body
     const { image } = value
 
-    const {
-      _id,
-      isAdmin,
-      io,
-      profileImage,
-      fullName,
-      username,
-      email,
-    } = textPayload
+    const { _id, isAdmin, io, profileImage, fullName, username, email } =
+      textPayload
 
     let conversationId
     let conversation = await ConversationRepository.findSingleConversation({
@@ -83,7 +76,7 @@ class TextService {
 
     if (socketDetails)
       io.to(socketDetails.socketId).emit("private-message", {
-        recipientId,
+        recipientId: { _id: recipientId },
         message,
         conversationId,
         image,
