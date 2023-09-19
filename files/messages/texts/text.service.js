@@ -16,7 +16,7 @@ class TextService {
       _id,
       isAdmin,
       io,
-      image: senderImage,
+      profileImage,
       fullName,
       username,
       email,
@@ -83,13 +83,14 @@ class TextService {
 
     if (socketDetails)
       io.to(socketDetails.socketId).emit("private-message", {
-        senderId: _id,
-        recipientId: message,
+        recipientId,
+        message,
         conversationId,
         image,
-        sender: {
-          image: senderImage,
-          name: fullName,
+        senderId: {
+          _id,
+          profileImage,
+          fullName,
           username: username,
           email,
         },
