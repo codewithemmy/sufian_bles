@@ -78,6 +78,7 @@ class UserService {
       username: userProfile.username,
       fullName: userProfile.fullName,
       email: userProfile.email,
+      accountType: userProfile.accountType,
       isAdmin: false,
     })
 

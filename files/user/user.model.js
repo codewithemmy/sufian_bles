@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
     accountType: {
       type: String,
       required: true,
-      enum: ["User", "Admin"],
+      enum: ["User"],
       default: "User",
     },
     isDelete: {
