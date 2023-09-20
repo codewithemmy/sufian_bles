@@ -47,6 +47,8 @@ class AdminAuthService {
     const token = await tokenHandler({
       _id: admin._id,
       email: admin.email,
+      fullName: admin.fullName,
+      profileImage: admin.profileImage,
       accountType: admin.accountType,
       isAdmin: true,
     })
@@ -176,7 +178,6 @@ class AdminAuthService {
 
     return { success: true, msg: authMessages.ADMIN_FOUND, data: getAdmin }
   }
-
 }
 
 module.exports = { AdminAuthService }
