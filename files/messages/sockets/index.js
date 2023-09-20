@@ -10,9 +10,9 @@ module.exports.socketConnection = async (io) => {
     socket.on("onlineUsers", (userId) => {
       !onlineUsers.some((user) => user.userId === userId) &&
         onlineUsers.push({ userId, socketId: socket.id })
+      console.log("onlineUsers", onlineUsers)
+      io.emit("onlineUsers", onlineUsers)
     })
-
-    io.emit("onlineUsers", onlineUsers)
 
     socket.on("typing", (data) => {
       if (data.typing == true) io.emit("display", data)
