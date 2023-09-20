@@ -9,7 +9,7 @@ module.exports.socketConnection = async (io) => {
 
     socket.on("onlineUsers", (userId) => {
       !onlineUsers.some((user) => user.userId === userId) &&
-        onlineUsers.push([{ userId, socketId: socket._id }])
+        onlineUsers.push([{ userId, socketId: socket.id }])
     })
 
     io.emit("onlineUsers", onlineUsers)
