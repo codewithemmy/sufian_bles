@@ -74,8 +74,11 @@ class TextService {
       userId: new mongoose.Types.ObjectId(recipientId),
     })
 
+    let socketDate = new Date()
+    let createdAt = socketDate.toISOString()
     if (socketDetails)
       io.to(socketDetails.socketId).emit("private-message", {
+        createdAt,
         recipientId: { _id: recipientId },
         message,
         conversationId,

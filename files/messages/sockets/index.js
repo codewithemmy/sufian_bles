@@ -2,17 +2,17 @@ const { default: mongoose } = require("mongoose")
 const { SocketRepository } = require("./sockets.repository")
 const fs = require("fs")
 
-let userDetails = []
+let onlineUsers = []
 module.exports.socketConnection = async (io) => {
   io.on("connection", async (socket) => {
     console.log(`⚡⚡: ${socket.id} user just connected!`)
 
-    socket.on("addUser", (userId) => {
-      console.log({ userId, socketId: socket._id })
-      userDetails.push([{ userId, socketId: socket._id }])
+    socket.on("onlineUsers", (userId) => {
+      !onlineUsers.some((user) => user.userId === userId) &&
+        onlineUsers.push([{ userId, socketId: socket._id }])
     })
 
-    io.emit("userDetails", `${userDetails}, this is for io `)
+    io.emit("onlineUsers", onlineUsers)
 
     socket.on("typing", (data) => {
       if (data.typing == true) io.emit("display", data)
