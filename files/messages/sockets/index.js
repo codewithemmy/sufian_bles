@@ -36,7 +36,7 @@ module.exports.socketConnection = async (io) => {
         socket.on("onlineUsers", (userId) => {
           !onlineUsers.some((user) => user.userId === userId) &&
             onlineUsers.push({
-              userId: socketDetails.userId,
+              userId: obj.userId,
               socketId: socketDetails.socketId,
             })
           console.log("onlineUsers", onlineUsers)
