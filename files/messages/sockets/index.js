@@ -7,7 +7,6 @@ module.exports.socketConnection = async (io) => {
   io.on("connection", async (socket) => {
     console.log(`⚡⚡: ${socket.id} user just connected!`)
 
-   
     socket.on("typing", (data) => {
       if (data.typing == true) io.emit("display", data)
       else io.emit("display", data)
@@ -34,13 +33,15 @@ module.exports.socketConnection = async (io) => {
           socket.emit("join", "Connection Successful")
         }
 
-         socket.on("onlineUsers", (userId) => {
-           !onlineUsers.some((user) => user.userId === userId) &&
-             onlineUsers.push({ userId, socketId: socket.id })
-           console.log("onlineUsers", onlineUsers)
-           io.emit("onlineUsers", onlineUsers)
-         })
-
+        socket.on("onlineUsers", (userId) => {
+          !onlineUsers.some((user) => user.userId === userId) &&
+            onlineUsers.push({
+              userId: socketDetails.userId,
+              socketId: socketDetails.socketId,
+            })
+          console.log("onlineUsers", onlineUsers)
+          io.emit("onlineUsers", onlineUsers)
+        })
       } catch (error) {
         console.log("socket error", error)
       }
