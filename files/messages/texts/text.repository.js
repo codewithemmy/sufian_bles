@@ -17,12 +17,12 @@ class TextRepository {
       .populate({
         path: "senderId",
         select:
-          "username profileImage fullName accountType email profileImage role image",
+          "username profileImage fullName accountType email profileImage image",
       })
       .populate({
         path: "recipientId",
         select:
-          "username profileImage fullName accountType email profileImage role image",
+          "username profileImage fullName accountType email profileImage image",
       })
       .sort(sort)
       .skip(skip)
