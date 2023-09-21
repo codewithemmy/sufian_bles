@@ -20,6 +20,7 @@ const { SocketRepository } = require("../messages/sockets/sockets.repository")
 class AuthService {
   static async verifyUser({ body, io }) {
     const { otp } = body
+
     const confirmOtp = await UserRepository.findSingleUserWithParams({
       verificationOtp: otp,
     })
