@@ -31,7 +31,6 @@ const updateOrderController = async (req, res, next) => {
     OrderService.updateOrderService(req.params.id, req.body)
   )
 
-  console.log("error", error)
 
   if (error) return next(error)
 

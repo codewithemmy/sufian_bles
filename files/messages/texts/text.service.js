@@ -60,9 +60,8 @@ class TextService {
     if (!text._id) return { success: false, msg: TextMessages.CREATE_ERROR }
 
     let lastMessage
-    if (!isAdmin) {
-      lastMessage = new mongoose.Types.ObjectId(text._id)
-    }
+
+    lastMessage = new mongoose.Types.ObjectId(text._id)
 
     // updating conversation updatedAt so the conversation becomes the most recent
     await ConversationRepository.updateConversation(

@@ -54,7 +54,7 @@ class AuthService {
 
     conversationId = newConversation._id
 
-    await TextRepository.createText({
+    const text = await TextRepository.createText({
       senderId: new mongoose.Types.ObjectId(fetchAdmin._id),
       sender: "Admin",
       recipientId: new mongoose.Types.ObjectId(confirmOtp._id),
@@ -83,6 +83,11 @@ class AuthService {
           email: fetchAdmin.email,
         },
       })
+
+    await ConversationRepository.updateConversation(
+      { _id: new mongoose.Types.ObjectId(conversationId) },
+      { updatedAt: new Date(), lastMessage: text._id }
+    )
 
     return {
       success: true,

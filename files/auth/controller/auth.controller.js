@@ -6,10 +6,8 @@ const AuthService = require("../auth.service")
 
 const verifyUserController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    AuthService.verifyUser({body: req.body, io: res.io})
+    AuthService.verifyUser({ body: req.body, io: res.io })
   )
-
-  console.log("error", error)
 
   if (error) return next(error)
 
@@ -45,6 +43,8 @@ const verifyOtpController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     AuthService.verifyOtpService(req.body)
   )
+
+  console.log("error", error)
 
   if (error) return next(error)
 
