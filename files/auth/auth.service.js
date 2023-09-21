@@ -40,6 +40,9 @@ class AuthService {
       modelType: "Admin",
     })
 
+    let message =
+      "You are Welcome to Bles Client Platform... I am available to attend to your enquiries"
+
     //create a new conversation once a user is verified
     let conversationId
     const newConversation = await ConversationRepository.createConversation({
@@ -47,11 +50,10 @@ class AuthService {
       entityOne: "User",
       entityTwoId: new mongoose.Types.ObjectId(fetchAdmin._id),
       entityTwo: "Admin",
+      lastMessage: message,
     })
 
     conversationId = newConversation._id
-    let message =
-      "You are Welcome to Bles Client Platform... I am available to attend to your enquiries"
 
     await TextRepository.createText({
       senderId: new mongoose.Types.ObjectId(fetchAdmin._id),
