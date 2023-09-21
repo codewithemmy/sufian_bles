@@ -12,6 +12,16 @@ module.exports.socketConnection = async (io) => {
       else io.emit("display", data)
     })
 
+    socket.on("onlineUsers", (userId) => {
+      !onlineUsers.some((user) => user.userId === userId) &&
+        onlineUsers.push({
+          userId,
+          socketId: socket.id,
+        })
+      console.log("onlineUsers", onlineUsers)
+      io.emit("onlineUsers", onlineUsers)
+    })
+
     socket.on("join", async (obj) => {
       try {
         //check to delete the socket id with the userId
@@ -32,23 +42,25 @@ module.exports.socketConnection = async (io) => {
         } else {
           socket.emit("join", "Connection Successful")
         }
-
-        socket.on("onlineUsers", (userId) => {
-          !onlineUsers.some((user) => user.userId === userId) &&
-            onlineUsers.push({
-              userId: obj.userId,
-              socketId: socketDetails.socketId,
-            })
-          console.log("onlineUsers", onlineUsers)
-          io.emit("onlineUsers", onlineUsers)
-        })
       } catch (error) {
         console.log("socket error", error)
       }
     })
 
+    socket.on("offline", () => {
+      // remove user from active users
+      onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id)
+      console.log("user is offline", onlineUsers)
+      // send all online users to all users
+      io.emit("get-users", onlineUsers)
+    })
+
     socket.on("disconnect", async () => {
       await SocketRepository.deleteUser(socket.id)
+      onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id)
+      console.log("user disconnected", onlineUsers)
+      // send all online users to all users
+      io.emit("get-users", onlineUsers)
     })
 
     socket.on("error", (error) => {
