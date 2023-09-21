@@ -13,13 +13,14 @@ module.exports.socketConnection = async (io) => {
     })
 
     socket.on("onlineUsers", (userId) => {
-    if (!onlineUsers.some((user) => user.userId === userId)) {  // if user is not added before
-      onlineUsers.push({ userId, socketId: socket.id });
-      console.log("new user is here!", onlineUsers);
-    }
-    // send all active users to new user
-    io.emit("onlineUsers", onlineUsers);
-  });
+      !onlineUsers.some((user) => user.userId === userId) &&
+        onlineUsers.push({
+          userId,
+          socketId: socket.id,
+        })
+      console.log("onlineUsers", onlineUsers)
+      io.emit("onlineUsers", onlineUsers)
+    })
 
     socket.on("join", async (obj) => {
       try {
