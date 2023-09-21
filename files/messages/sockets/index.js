@@ -60,7 +60,7 @@ module.exports.socketConnection = async (io) => {
       onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id)
       console.log("user is offline", onlineUsers)
       // send all online users to all users
-      io.emit("get-users", onlineUsers)
+      io.emit("onlineUsers", onlineUsers)
     })
 
     socket.on("error", (error) => {
