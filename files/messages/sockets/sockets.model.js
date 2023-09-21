@@ -4,7 +4,7 @@ const socketSchema = new mongoose.Schema(
   {
     socketId: {
       type: String,
-      required: true,
+      // required: true,
     },
     modelType: {
       type: String,

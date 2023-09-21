@@ -5,7 +5,11 @@ const { CustomError } = require("../../../utils/errors")
 const AuthService = require("../auth.service")
 
 const verifyUserController = async (req, res, next) => {
-  const [error, data] = await manageAsyncOps(AuthService.verifyUser(req.body))
+  const [error, data] = await manageAsyncOps(
+    AuthService.verifyUser({body: req.body, io: res.io})
+  )
+
+  console.log("error", error)
 
   if (error) return next(error)
 
