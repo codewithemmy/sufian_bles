@@ -47,18 +47,18 @@ module.exports.socketConnection = async (io) => {
       }
     })
 
-    socket.on("offline", () => {
-      // remove user from active users
-      onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id)
-      console.log("user is offline", onlineUsers)
-      // send all online users to all users
-      io.emit("get-users", onlineUsers)
-    })
-
     socket.on("disconnect", async () => {
       await SocketRepository.deleteUser(socket.id)
       onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id)
       console.log("user disconnected", onlineUsers)
+      // send all online users to all users
+      io.emit("get-users", onlineUsers)
+    })
+
+    socket.on("offline", () => {
+      // remove user from active users
+      onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id)
+      console.log("user is offline", onlineUsers)
       // send all online users to all users
       io.emit("get-users", onlineUsers)
     })
