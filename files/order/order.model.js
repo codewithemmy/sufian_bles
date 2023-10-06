@@ -30,6 +30,7 @@ const orderSchema = new mongoose.Schema(
       default: false,
     },
     dateOfDelivery: { type: Date, default: null },
+    reasonForExtension: { type: String },
     selectedTire: { type: String },
     status: {
       type: String,

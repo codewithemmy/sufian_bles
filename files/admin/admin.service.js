@@ -44,6 +44,8 @@ class AdminAuthService {
       return { success: false, msg: authMessages.LOGIN_ERROR }
     }
 
+    admin.password = undefined
+
     const token = await tokenHandler({
       _id: admin._id,
       email: admin.email,

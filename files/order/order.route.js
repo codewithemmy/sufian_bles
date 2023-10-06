@@ -6,6 +6,7 @@ const { isAuthenticated, adminVerifier } = require("../../utils")
 const {
   createOrderController,
   fetchOrderController,
+  updateOrderController,
 } = require("./order.controller")
 
 //authenticated routes go below here

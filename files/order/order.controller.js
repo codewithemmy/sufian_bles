@@ -31,6 +31,7 @@ const updateOrderController = async (req, res, next) => {
     OrderService.updateOrderService(req.params.id, req.body)
   )
 
+  console.log("error", error)
 
   if (error) return next(error)
 
@@ -38,31 +39,6 @@ const updateOrderController = async (req, res, next) => {
 
   return responseHandler(res, SUCCESS, data)
 }
-// const fetchSubscriptions = async (req, res, next) => {
-//   const [error, data] = await manageAsyncOps(
-//     OrderService.fetchEnterpriseSubscriptions({
-//       user: res.locals.jwt,
-//       query: req.query,
-//     })
-//   )
-//   console.log("error", error)
-//   if (error) return next(error)
-
-//   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
-
-//   return responseHandler(res, SUCCESS, data)
-// }
-
-// const fetchSubscription = async (req, res, next) => {
-//   const [error, data] = await manageAsyncOps(
-//     OrderService.fetchEnterpriseSubscription(res.locals.jwt)
-//   )
-//   if (error) return next(error)
-
-//   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
-
-//   return responseHandler(res, SUCCESS, data)
-// }
 
 module.exports = {
   createOrderController,

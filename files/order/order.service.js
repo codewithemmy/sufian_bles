@@ -105,7 +105,7 @@ class OrderService {
 
     if (!order._id) return { success: false, msg: OrderMessages.ORDER_ERROR }
 
-    const updateOrder = await OrderRepository.updateOrder(id, payload)
+    await OrderRepository.updateOrder(id, payload)
 
     return {
       success: true,
