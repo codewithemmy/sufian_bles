@@ -8,4 +8,5 @@ module.exports.OrderMessages = {
   UPGRADE_SUCCESSFUL: "order upgrade successful",
   DUPLICATE: "duplicate order",
   UPDATE_SUCCESS: "update successful",
+  NO_ORDER_CONVERSATION: "you don't have a conversation with the user",
 }

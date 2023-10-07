@@ -26,7 +26,7 @@ const fetchOrderController = async (req, res, next) => {
 
 const updateOrderController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    OrderService.updateOrderService(req.params.id, req.body)
+    OrderService.updateOrderService(req.params.id, req.body, res.locals.jwt._id)
   )
 
   if (error) return next(error)
@@ -49,9 +49,19 @@ const uploadOrderFilesControllers = async (req, res, next) => {
   return responseHandler(res, 200, data)
 }
 
+const fetchOrderFilesController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    OrderService.fetchOrder(req.query, res.locals.jwt)
+  )
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  return responseHandler(res, SUCCESS, data)
+}
+
 module.exports = {
   createOrderController,
   fetchOrderController,
   updateOrderController,
   uploadOrderFilesControllers,
+  fetchOrderFilesController,
 }

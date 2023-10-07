@@ -13,6 +13,22 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
     password: { type: String },
+    bio: {
+      type: String,
+      required: true,
+    },
+    introduction: {
+      type: String,
+      required: true,
+    },
+    jobTitle: {
+      type: String,
+      required: true,
+    },
+    alternateEmail: {
+      type: String,
+      required: true,
+    },
     profileImage: { type: String },
     accountType: {
       type: String,

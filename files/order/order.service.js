@@ -7,6 +7,11 @@ const {
   TransactionRepository,
 } = require("../transaction/transaction.repository")
 const { TransactionMessages } = require("../transaction/transaction.messages")
+const {
+  ConversationRepository,
+} = require("../messages/conversations/conversation.repository")
+
+const { TextRepository } = require("../messages/texts/text.repository")
 
 class OrderService {
   static async createOrder(payload) {
@@ -80,7 +85,7 @@ class OrderService {
       extra = { userId: new mongoose.Types.ObjectId(_id) }
     }
 
-    const order = await OrderRepository.fetch({
+    const order = await OrderRepository.fetchFiles({
       ...params,
       limit,
       skip,
@@ -98,7 +103,7 @@ class OrderService {
     }
   }
 
-  static async updateOrderService(id, payload) {
+  static async updateOrderService(id, payload, jwt) {
     const order = await OrderRepository.fetchOne({
       _id: new mongoose.Types.ObjectId(id),
     })
@@ -106,6 +111,59 @@ class OrderService {
     if (!order._id) return { success: false, msg: OrderMessages.ORDER_ERROR }
 
     await OrderRepository.updateOrder(id, payload)
+
+    if (payload.dateOfDelivery && payload.reasonForExtension) {
+      let conversationId
+      let conversation = await ConversationRepository.findSingleConversation({
+        $or: [
+          {
+            entityOneId: new mongoose.Types.ObjectId(jwt),
+            entityTwoId: new mongoose.Types.ObjectId(order.userId),
+            orderId: order.orderId,
+          },
+          {
+            entityOneId: new mongoose.Types.ObjectId(order.userId),
+            entityTwoId: new mongoose.Types.ObjectId(jwt),
+            orderId: order.orderId,
+          },
+          {
+            entityOneId: new mongoose.Types.ObjectId(jwt),
+            entityTwoId: new mongoose.Types.ObjectId(order.userId),
+          },
+          {
+            entityOneId: new mongoose.Types.ObjectId(order.userId),
+            entityTwoId: new mongoose.Types.ObjectId(jwt),
+          },
+        ],
+      })
+
+      if (!conversation)
+        return {
+          success: false,
+          msg: OrderMessages.NO_ORDER_CONVERSATION,
+        }
+
+      conversationId = conversation._id
+
+      const text = await TextRepository.createText({
+        senderId: new mongoose.Types.ObjectId(jwt),
+        sender: "Admin",
+        recipientId: new mongoose.Types.ObjectId(order.userId),
+        recipient: "User",
+        conversationId,
+        message: payload.reasonForExtension,
+      })
+
+      if (!text._id) return { success: false, msg: TextMessages.CREATE_ERROR }
+
+      let lastMessage = new mongoose.Types.ObjectId(text._id)
+
+      // updating conversation updatedAt so the conversation becomes the most recent
+      await ConversationRepository.updateConversation(
+        { _id: new mongoose.Types.ObjectId(conversationId) },
+        { updatedAt: new Date(), lastMessage }
+      )
+    }
 
     return {
       success: true,
@@ -144,6 +202,41 @@ class OrderService {
     return {
       success: true,
       msg: OrderMessages.UPDATE_SUCCESS,
+    }
+  }
+
+  static async fetchOrderFile(payload, locals) {
+    const { error, params, limit, skip, sort } = queryConstructor(
+      payload,
+      "createdAt",
+      "Order"
+    )
+
+    if (error) return { success: false, msg: error }
+
+    const { _id, isAdmin } = locals
+
+    let extra = {}
+
+    if (!isAdmin) {
+      extra = { userId: new mongoose.Types.ObjectId(_id) }
+    }
+
+    const order = await OrderRepository.fetch({
+      ...params,
+      limit,
+      skip,
+      sort,
+      ...extra,
+    })
+
+    if (order.length < 1)
+      return { success: true, msg: OrderMessages.NONE_FOUND, data: [] }
+
+    return {
+      success: true,
+      msg: OrderMessages.FETCH_SUCCESS,
+      data: order,
     }
   }
 }

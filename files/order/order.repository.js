@@ -47,6 +47,26 @@ class OrderRepository {
       { new: true, runValidator: true }
     )
   }
+
+  static async fetchFiles(payload, select) {
+    const {
+      limit = LIMIT,
+      skip = SKIP,
+      sort = SORT,
+      ...restOfPayload
+    } = payload
+
+    return await Order.find(
+      {
+        ...restOfPayload,
+      },
+      { file: 1 }
+    )
+      .sort(sort)
+      .skip(skip)
+      .limit(limit)
+      .select(select)
+  }
 }
 
 module.exports = { OrderRepository }

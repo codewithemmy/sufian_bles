@@ -1,7 +1,11 @@
 const orderRoute = require("express").Router()
 const { checkSchema } = require("express-validator")
 const { validate } = require("../../validations/validate")
-const { uploadManager, uploadFileManager, videoManager } = require("../../utils/multer")
+const {
+  uploadManager,
+  uploadFileManager,
+  videoManager,
+} = require("../../utils/multer")
 
 const { isAuthenticated, adminVerifier } = require("../../utils")
 const {
@@ -9,6 +13,7 @@ const {
   fetchOrderController,
   updateOrderController,
   uploadOrderFilesControllers,
+  fetchOrderFilesController,
 } = require("./order.controller")
 
 //authenticated routes go below here
@@ -19,12 +24,15 @@ orderRoute
   .post(adminVerifier, createOrderController)
   .get(fetchOrderController)
 
+orderRoute.route("/files").get(fetchOrderFilesController)
+
 orderRoute.patch(
   "/file/:id",
   adminVerifier,
   uploadFileManager("files").single("file"),
   uploadOrderFilesControllers
 )
+
 orderRoute.patch(
   "/video/:id",
   adminVerifier,

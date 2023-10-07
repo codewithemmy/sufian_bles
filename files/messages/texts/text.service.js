@@ -21,12 +21,19 @@ class TextService {
         {
           entityOneId: new mongoose.Types.ObjectId(_id),
           entityTwoId: new mongoose.Types.ObjectId(recipientId),
-          orderId,
         },
         {
           entityOneId: new mongoose.Types.ObjectId(recipientId),
           entityTwoId: new mongoose.Types.ObjectId(_id),
           orderId,
+        },
+        {
+          entityOneId: new mongoose.Types.ObjectId(recipientId),
+          entityTwoId: new mongoose.Types.ObjectId(_id),
+        },
+        {
+          entityOneId: new mongoose.Types.ObjectId(_id),
+          entityTwoId: new mongoose.Types.ObjectId(recipientId),
         },
       ],
     })
