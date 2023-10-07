@@ -37,6 +37,11 @@ const orderSchema = new mongoose.Schema(
       enum: ["completed", "active", "delivered", "canceled ", "in-progress"],
       default: "in-progress",
     },
+    file: [
+      {
+        type: String,
+      },
+    ],
     expiresAt: {
       type: Number,
     },
@@ -44,11 +49,9 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-
 const order = mongoose.model("Order", orderSchema, "order")
 
 module.exports = { Order: order }
-
 
 // cron.schedule("0 0 * * *", async () => {
 //   const subscriptions = await subscription.find({ expiresAt: { $gt: 0 } })

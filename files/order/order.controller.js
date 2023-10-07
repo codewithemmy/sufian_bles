@@ -1,6 +1,6 @@
 const { BAD_REQUEST, SUCCESS } = require("../../constants/statusCode")
 const { responseHandler } = require("../../core/response")
-const { manageAsyncOps } = require("../../utils/index")
+const { manageAsyncOps, fileModifier } = require("../../utils/index")
 const { CustomError } = require("../../utils/errors")
 const { OrderService } = require("./order.service")
 
@@ -31,8 +31,6 @@ const updateOrderController = async (req, res, next) => {
     OrderService.updateOrderService(req.params.id, req.body)
   )
 
-  console.log("error", error)
-
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
@@ -40,8 +38,22 @@ const updateOrderController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
+const uploadOrderFilesControllers = async (req, res, next) => {
+  let value = await fileModifier(req)
+  const [error, data] = await manageAsyncOps(
+    OrderService.uploadOrderFileService(value, req.params.id)
+  )
+
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  return responseHandler(res, 200, data)
+}
+
 module.exports = {
   createOrderController,
   fetchOrderController,
   updateOrderController,
+  uploadOrderFilesControllers,
 }

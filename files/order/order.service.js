@@ -128,49 +128,24 @@ class OrderService {
     }
   }
 
-  // static async updateSupscripton(user, payload) {
-  //   const { body } = payload
-  //   // chwck if the user already made payment for the subscripton plan
-  //   const transaction = await TransactionRepository.fetchOne({
-  //     paymentFor: "enterpriseOrder",
-  //     enterpriseId: user.enterpriseId,
-  //     _id: body.transactionId,
-  //     status: "confirmed",
-  //   })
-  //   // throw eror if no ranssaction was found for the lan the user is subscribing for
-  //   if (!transaction)
-  //     return { success: false, msg: TransactionMessages.TRANSACTION_NOT_FOUND }
-  //   // check if the usser account already have a Order, (Order is not expired)
-  //   const plan = await OrderRepository.fetchOne({
-  //     enterpriseId: new mongoose.Types.ObjectId(user.enterpriseId),
-  //   })
+  static async uploadOrderFileService(payload, id) {
+    const { file } = payload
 
-  //   if (plan.transactionId.toString() === body.transactionId) {
-  //     return { success: false, msg: TransactionMessages.DUPLICATE_TRANSACTION }
-  //   }
-  //   // if sbscription does not exist, create one for the enterprize
-  //   if (!plan) {
-  //     return this.upgradeOrder({ user, body })
-  //   }
+    const order = await OrderRepository.fetchOne({
+      _id: new mongoose.Types.ObjectId(id),
+    })
 
-  //   const currentMonthDays = moment().daysInMonth()
-  //   let expiresAt
-  //   if (plan.OrderPlanId.toString() === body.OrderPlanId) {
-  //     // plan is the same then add new month Order to current Order
-  //     expiresAt = plan.expiresAt + currentMonthDays
-  //   } else {
-  //     expiresAt = currentMonthDays
-  //   }
+    if (!order._id) return { success: false, msg: OrderMessages.ORDER_ERROR }
 
-  //   await OrderRepository.update(user.enterpriseId, {
-  //     $set: { expiresAt, ...body },
-  //   })
+    await OrderRepository.uploadOrderFile(id, {
+      file,
+    })
 
-  //   return {
-  //     success: true,
-  //     msg: OrderMessages.UPGRADE_SUCCESSFUL,
-  //   }
-  // }
+    return {
+      success: true,
+      msg: OrderMessages.UPDATE_SUCCESS,
+    }
+  }
 }
 
 module.exports = { OrderService }

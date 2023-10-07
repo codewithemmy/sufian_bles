@@ -40,6 +40,13 @@ class OrderRepository {
       { new: true, runValidator: true }
     )
   }
+  static async uploadOrderFile(id, params) {
+    return Order.findByIdAndUpdate(
+      { _id: new mongoose.Types.ObjectId(id) },
+      { $push: { ...params } },
+      { new: true, runValidator: true }
+    )
+  }
 }
 
 module.exports = { OrderRepository }
