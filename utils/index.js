@@ -98,7 +98,6 @@ const queryConstructor = (query, sortBy, item) => {
 
 const fileModifier = (req) => {
   let { body, file, files, params } = req
-
   let mediaUrl = []
   let formBody = {}
   if (files) {

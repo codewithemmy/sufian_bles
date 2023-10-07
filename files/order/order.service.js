@@ -129,7 +129,7 @@ class OrderService {
   }
 
   static async uploadOrderFileService(payload, id) {
-    const { file } = payload
+    const { image } = payload
 
     const order = await OrderRepository.fetchOne({
       _id: new mongoose.Types.ObjectId(id),
@@ -138,7 +138,7 @@ class OrderService {
     if (!order._id) return { success: false, msg: OrderMessages.ORDER_ERROR }
 
     await OrderRepository.uploadOrderFile(id, {
-      file,
+      file: image,
     })
 
     return {

@@ -24,4 +24,55 @@ const uploadManager = (destination) => {
   })
 }
 
-module.exports = { uploadManager }
+const uploadFileManager = (destination) => {
+  return multer({
+    storage: new CloudinaryStorage({
+      cloudinary: cloudinary,
+      params: {
+        folder: `BlesClient/manage/${destination}`,
+      },
+    }),
+  })
+}
+
+const videoManager = (destination) => {
+  return multer({
+    storage: new CloudinaryStorage({
+      cloudinary: cloudinary,
+      params: {
+        folder: `BlesClient/manage/${destination}`,
+        format: "mp4",
+        resource_type: "video",
+      },
+    }),
+    fileFilter,
+  })
+}
+
+const audioManager = (destination) => {
+  return multer({
+    storage: new CloudinaryStorage({
+      cloudinary: cloudinary,
+      params: {
+        folder: `BlesClient/manage/${destination}`,
+        resource_type: "auto",
+      },
+    }),
+    fileFilter,
+  })
+}
+
+function fileFilter(req, file, cb) {
+  if (req.get("Authorization") !== undefined) {
+    cb(null, true)
+  } else {
+    cb(null, true)
+  }
+}
+
+module.exports = {
+  uploadManager,
+  uploadFileManager,
+  videoManager,
+  audioManager,
+}

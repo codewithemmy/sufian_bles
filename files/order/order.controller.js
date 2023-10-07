@@ -19,8 +19,6 @@ const fetchOrderController = async (req, res, next) => {
     OrderService.fetchOrder(req.query, res.locals.jwt)
   )
 
-  if (error) return next(error)
-
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
 
   return responseHandler(res, SUCCESS, data)
