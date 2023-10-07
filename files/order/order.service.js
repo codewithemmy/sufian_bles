@@ -34,15 +34,17 @@ class OrderService {
     if (!transaction)
       return { success: false, msg: TransactionMessages.TRANSACTION_NOT_FOUND }
 
-    // let status
+    let randomGen
+    let duplicateRandomGen
 
-    // if (transaction.status === "paid") {
-    //   status = "Active"
-    // } else if (transaction.status === "failed") {
-    //   status = "Cancelled"
-    // }
+    // Keep generating a new randomGen until it doesn't collide with duplicateRandomGen
+    do {
+      randomGen = AlphaNumeric(7, "number")
 
-    const randomGen = AlphaNumeric(7, "number")
+      duplicateRandomGen = await OrderRepository.fetchOne({
+        orderId: randomGen,
+      })
+    } while (duplicateRandomGen)
 
     const duplicateOrder = await OrderRepository.fetchOne({
       transaction: transaction._id,
