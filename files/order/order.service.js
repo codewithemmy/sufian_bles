@@ -106,6 +106,8 @@ class OrderService {
   }
 
   static async updateOrderService(id, payload, jwt) {
+    delete payload.email
+
     const order = await OrderRepository.fetchOne({
       _id: new mongoose.Types.ObjectId(id),
     })

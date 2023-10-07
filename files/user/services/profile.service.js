@@ -20,6 +20,8 @@ class ProfileService {
   static async updateProfileService(id, payload) {
     const { body, image } = payload
 
+    delete body.email
+
     const userprofile = await UserRepository.updateUserById(id, {
       profileImage: image,
       ...body,
