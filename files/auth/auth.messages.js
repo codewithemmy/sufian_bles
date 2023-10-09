@@ -18,4 +18,5 @@ module.exports.AuthFailure = {
   EMAIL: "Email not delivered",
   ERROR: "Something went wrong",
   OTP_SENT: "unable to send Otp",
+  VERIFIED: "user already verified",
 }
