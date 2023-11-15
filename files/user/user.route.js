@@ -14,12 +14,16 @@ const {
   getUserProfileController,
 } = require("./controllers/profile.controller")
 const { createUser } = require("../../validations/users/createUser.validation")
+const { loginValidation } = require("../../validations/users/loginValidation")
 
 //routes
-userRoute.route("/").post(createUserController)
+userRoute
+  .route("/")
+  .post(validate(checkSchema(createUser)), createUserController)
+
 userRoute
   .route("/login")
-  .post(validate(checkSchema(createUser)), userLoginController)
+  .post(validate(checkSchema(loginValidation)), userLoginController)
 
 userRoute.route("/").get(getUserProfileController)
 

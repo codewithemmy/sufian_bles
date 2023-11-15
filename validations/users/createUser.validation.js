@@ -8,10 +8,6 @@ const createUser = {
   email: {
     notEmpty: true,
     errorMessage: "email cannot be empty",
-  },
-  email: {
-    notEmpty: true,
-    errorMessage: "email cannot be empty",
     isEmail: {
       errorMessage: "Invalid email address",
     },
