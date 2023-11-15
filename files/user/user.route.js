@@ -1,7 +1,8 @@
 const { uploadManager } = require("../../utils/multer")
 const { checkSchema } = require("express-validator")
 const userRoute = require("express").Router()
-const { isAuthenticated, adminVerifier } = require("../../utils")
+const { isAuthenticated } = require("../../utils")
+const { validate } = require("../../validations/validate")
 
 //controller files
 const {
@@ -12,10 +13,13 @@ const {
   updateUserProfileController,
   getUserProfileController,
 } = require("./controllers/profile.controller")
+const { createUser } = require("../../validations/users/createUser.validation")
 
 //routes
 userRoute.route("/").post(createUserController)
-userRoute.route("/login").post(userLoginController)
+userRoute
+  .route("/login")
+  .post(validate(checkSchema(createUser)), userLoginController)
 
 userRoute.route("/").get(getUserProfileController)
 

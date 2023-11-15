@@ -179,8 +179,6 @@ class TransactionService {
     )
     if (error) return { success: false, msg: error }
 
-    // let teacher = { userId: new mongoose.Types.ObjectId(locals._id) }
-
     const transaction = await TransactionRepository.fetchTransactionsByParams({
       ...params,
       limit,
