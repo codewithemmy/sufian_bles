@@ -27,7 +27,7 @@ class AuthService {
 
     if (!confirmOtp) return { success: false, msg: AuthFailure.VERIFY_OTP }
     
-    if (confirmOtp.isVerified = true)
+    if (confirmOtp.isVerified)
       return { success: false, msg: AuthFailure.VERIFIED }
 
     confirmOtp.isVerified = true
