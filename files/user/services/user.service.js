@@ -50,7 +50,6 @@ class UserService {
     return {
       success: true,
       msg: UserSuccess.CREATE,
-      otp: otp,
     }
   }
 
