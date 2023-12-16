@@ -40,7 +40,7 @@ class SubscriptionPlanService {
     })
 
     if (subscriptionPlans.length < 1)
-      return { successs: false, msg: SubscriptionPlanMessages.NONE_FOUND }
+      return { success: false, msg: SubscriptionPlanMessages.NONE_FOUND }
 
     return {
       success: true,
